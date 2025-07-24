@@ -22,6 +22,8 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
-		"@inlang/paraglide-js": "^2.0.0"
+		"@inlang/paraglide-js": "^2.0.0",
+		"sass": "^1.89.2",
+		"sass-embedded": "^1.89.2"
 	}
 }
