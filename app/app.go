@@ -4,6 +4,7 @@ package app
 import (
 	"context"
 	"embed"
+	"slicenfill/engine"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -57,4 +58,23 @@ func (app *App) Run() error {
 	})
 }
 
-func (app *App) CreateEngine() {}
+type CreateEngineResponse struct {
+	EngineID int    `json:"engineID"`
+	Error    string `json:"error,omitempty"`
+}
+
+func (app *App) CreateEngine(path string) CreateEngineResponse {
+	engine, err := engine.NewEngine(path)
+	if err != nil {
+		return CreateEngineResponse{
+			EngineID: 0,
+			Error:    err.Error(),
+		}
+	} else {
+		EngineID := AddEngine(engine)
+		return CreateEngineResponse{
+			EngineID: EngineID,
+			Error:    "",
+		}
+	}
+}

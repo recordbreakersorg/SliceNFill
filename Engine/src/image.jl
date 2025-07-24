@@ -34,7 +34,7 @@ end
 function getdata(img::Image, ::Type{String})
   data::String = ""
   for y in 1:img.height, x in 1:img.width # list of rows
-    data *= getdata(image.data[x, y], String)
+    data *= getdata(img.data[x, y], String)
   end
   return data
 end
