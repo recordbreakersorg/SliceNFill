@@ -1,10 +1,14 @@
 <script lang="ts">
-  import Zoom from "svelte-zoom";
   import type Image from "$lib/img";
   import { onMount } from "svelte";
 
   export let image: Image;
   export let data: Uint8Array;
+  export let width: number | null = null;
+  export let height: number | null = null;
+
+  width ??= image.width;
+  height ??= image.height;
 
   let canvas: HTMLCanvasElement;
 
@@ -14,15 +18,19 @@
     if (!imageData) return;
     imageData.data.set(data);
     ctx?.putImageData(imageData, 0, 0);
+    canvas.style.width = width.toFixed(2);
+    canvas.style.height = height.toFixed(2);
   });
 </script>
 
-<Zoom />
-<!-- <div use:zoom> -->
-<!--   <canvas -->
-<!--     width={image.width} -->
-<!--     height={image.height} -->
-<!--     bind:this={canvas} -->
-<!--     class="view-canvas">HTML Canvas not supported</canvas -->
-<!--   > -->
-<!-- </div> -->
+<div class="container">
+  <canvas bind:this={canvas} {width} {height}></canvas>
+</div>
+
+<style lang="sass">
+div.container
+  width: 100%
+  canvas
+    max-width: 100%
+    max-height: 100%
+</style>

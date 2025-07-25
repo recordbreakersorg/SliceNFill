@@ -13,3 +13,9 @@
     </div>
   </div>
 </div>
+
+<style lang="sass">
+  button.w3-button
+    padding: 3px 18px
+    text-align: center
+</style>

@@ -5,6 +5,8 @@ import {engine} from '../models';
 
 export function CreateEngine(arg1:string):Promise<app.CreateEngineResponse>;
 
+export function DestroyEngine(arg1:number):Promise<void>;
+
 export function GetEngineByFileName(arg1:string):Promise<any>;
 
 export function GetEngineByID(arg1:number):Promise<app.EngineInfo>;

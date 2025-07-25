@@ -8,12 +8,10 @@
 </script>
 
 {#await updateEngines()}
-  <div class="w3-center">
+  <div class="w3-padding-64 w3-center">
     <CircularProgress indeterminate={true} size={200} />
   </div>
 {:then}
-  <TabBar />
-
   {#if $CurrentEngineStore != null}
     <Editor engine={$CurrentEngineStore} />
   {:else}

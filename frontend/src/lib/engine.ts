@@ -1,5 +1,5 @@
 import Img from "./img";
-import { CreateEngine, GetEngineByFileName, GetEngines } from "./wailsjs/go/app/App";
+import { CreateEngine, DestroyEngine, GetEngineByFileName, GetEngines } from "./wailsjs/go/app/App";
 import { app } from "./wailsjs/go/models";
 export default class Engine {
   id: number;
@@ -9,6 +9,9 @@ export default class Engine {
     this.id = id;
     this.file = path;
     this.image = image;
+  }
+  async destroy(): Promise<void> {
+    await DestroyEngine(this.id);
   }
   static fromInfo(info: app.EngineInfo): Engine {
     return new Engine(info.id, info.engine.FilePath, Img.fromGO(info.engine.Image));

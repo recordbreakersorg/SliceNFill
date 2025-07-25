@@ -6,6 +6,10 @@ export function CreateEngine(arg1) {
   return window['go']['app']['App']['CreateEngine'](arg1);
 }
 
+export function DestroyEngine(arg1) {
+  return window['go']['app']['App']['DestroyEngine'](arg1);
+}
+
 export function GetEngineByFileName(arg1) {
   return window['go']['app']['App']['GetEngineByFileName'](arg1);
 }

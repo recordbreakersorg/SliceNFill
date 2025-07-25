@@ -39,3 +39,7 @@ func (img *Image) GetData() (ImageData, error) {
 		Height: img.Height,
 	}, nil
 }
+
+func (img *Image) Destroy() bool {
+	return destroyImage(img.ID)
+}

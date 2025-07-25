@@ -6,6 +6,9 @@ type Engine struct {
 	Image    Image
 }
 
+func (engine *Engine) Destroy() {
+}
+
 func NewEngine(path string) (*Engine, error) {
 	image, err := OpenImage(path)
 	if err != nil {

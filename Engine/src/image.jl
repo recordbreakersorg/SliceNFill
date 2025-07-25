@@ -2,7 +2,7 @@ mutable struct Image
   data::Vector{UInt8}
   width::UInt
   height::UInt
-  Image(w::Int, h::Int) = new(Vector{UInt8}(undef, w * h * 4), w, h)
+  Image(w::UInt, h::UInt) = new(Vector{UInt8}(undef, w * h * 4), w, h)
 end
 
 function setdata!(img::Image, data::Vector{UInt8})

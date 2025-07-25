@@ -145,3 +145,11 @@ func (app *App) GetImageData(image engine.Image) ImageDataResponse {
 		Error: msg,
 	}
 }
+
+func (app *App) DestroyEngine(id int) {
+	engine, exists := engines[id]
+	if exists {
+		engine.Destroy()
+		delete(engines, id)
+	}
+}
