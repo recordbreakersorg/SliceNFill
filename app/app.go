@@ -134,11 +134,11 @@ type ImageDataResponse struct {
 
 func (app *App) GetImageData(image engine.Image) ImageDataResponse {
 	data, err := image.GetData()
-	fmt.Println("Got data: ", len(data.Data))
 	var msg string
 	if err != nil {
 		msg = fmt.Sprintf("Error getting image data: %s", err.Error())
 	}
+	fmt.Printf("[go:app] Sending to frontend. First 16 bytes: %v\n", data.Data[:16])
 	return ImageDataResponse{
 		Data:  data.Data,
 		Image: image,

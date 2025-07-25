@@ -22,11 +22,10 @@ export default class Image {
     // @ts-ignore
     const rawData: string = (await GetImageData(this.toGO())).data;
     const data = atob(rawData);
-    console.log("Got data ", data, " length ", data.length);
     this.data = new Uint8Array(data.length);
     for (let i = 0; i < data.length; i++)
       this.data[i] = data.charCodeAt(i);
-    console.log("After loaded: ", this, this.data);
+    console.log(`[ts:img] Decoded from base64. First 16 bytes: ${this.data.slice(0, 16)}`);
     return this.data;
   }
   async getData(): Promise<Uint8Array> {

@@ -1,5 +1,5 @@
 module Engine
-export Image, Pix, setdata!, getdata, echo
+export Image, setdata!, getdata, echo
 
 include("image.jl")
 

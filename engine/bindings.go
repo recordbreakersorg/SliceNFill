@@ -22,7 +22,7 @@ import (
 func createImage(data []uint8, width, height int) uint {
 	cWidth := C.uint(width)
 	cHeight := C.uint(height)
-
+	fmt.Printf("[go:bridge] Sending to Julia. First 16 bytes: %v\n", data[:16])
 	imageID := C.createImage(unsafe.Pointer(&data[0]), C.size_t(len(data)), cWidth, cHeight)
 	return uint(imageID)
 }

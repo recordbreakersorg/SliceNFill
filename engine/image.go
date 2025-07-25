@@ -32,6 +32,7 @@ func (img *Image) GetData() (ImageData, error) {
 	if data == nil {
 		return ImageData{}, fmt.Errorf("image data not found for ID %d", img.ID)
 	}
+	fmt.Printf("[go:image] Received from Julia. First 16 bytes: %v\n", data[:16])
 	return ImageData{
 		Data:   data,
 		Width:  img.Width,

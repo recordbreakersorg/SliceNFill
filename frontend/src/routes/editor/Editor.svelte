@@ -3,6 +3,7 @@
   import Engine from "$lib/engine";
   import Menu from "./Menu.svelte";
   import { EditorMode } from "$lib/editor";
+  import ImageViewer from "$lib/components/ImageViewer.svelte";
   import EmptyView from "./EmptyView.svelte";
   import CircularProgress from "$lib/components/CircularProgress.svelte";
   export let engine: Engine;
@@ -20,7 +21,7 @@
     </div>
   {:then data}
     {engine.image.width}&times;{engine.image.height}
-    <EmptyView {data} image={engine.image} />
+    <ImageViewer {data} image={engine.image} />
   {:catch error}
     <div class="w3-panel w3-text-red w3-center">
       <h3>{error}</h3>

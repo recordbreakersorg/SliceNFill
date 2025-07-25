@@ -31,7 +31,7 @@
 {#if $EnginesStore.length != 0}
   <div class="w3-bar tabBar">
     {#each $EnginesStore as engine}
-      <button
+      <span
         aria-label="Engine: {engine.id}"
         class="w3-bar-item w3-button {$CurrentEngineStore == engine
           ? 'selected'
@@ -39,11 +39,12 @@
         on:click={engineSetter(engine)}
       >
         {engine.file.length > 10 ? "..." + engine.file.slice(-10) : engine.file}
-      </button>
+        <button class="w3-bar-item w3-button close-button">&times;</button>
+      </span>
     {/each}
     <button
       aria-label="Add Engine"
-      class="w3-bar-item w3-button w3-hover-dark-gray addButton"
+      class="w3-right w3-bar-item w3-button w3-hover-dark-gray addButton"
       on:click={askOpen}>+</button
     >
   </div>
@@ -68,4 +69,11 @@ button.selected
 button
   padding: 3px !important
   display: inline
+button.close-button
+  padding: 5px 5px !important
+  margin-left: 0px
+  border-radius: 5px
+  width: 30px
+  height: 30px
+
 </style>

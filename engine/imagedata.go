@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"image"
 	"os"
 )
@@ -40,6 +41,7 @@ func LoadImageData(path string) (ImageData, error) {
 			idx += 4
 		}
 	}
+	fmt.Printf("[go:imagedata] Loaded %s, size %dx%d. First 16 bytes: %v\n", path, width, height, data[:16])
 
 	return ImageData{
 		Data:   data,
