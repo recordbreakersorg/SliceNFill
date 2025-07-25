@@ -19,8 +19,14 @@ export default class Image {
     return new engine.Image({ ID: this.id, Width: this.width, Height: this.height });
   }
   async load(): Promise<Uint8Array> {
-    const data = await GetImageData(this.toGO())
-    this.data = new Uint8Array(data.data);
+    // @ts-ignore
+    const rawData: string = (await GetImageData(this.toGO())).data;
+    const data = atob(rawData);
+    console.log("Got data ", data, " length ", data.length);
+    this.data = new Uint8Array(data.length);
+    for (let i = 0; i < data.length; i++)
+      this.data[i] = data.charCodeAt(i);
+    console.log("After loaded: ", this, this.data);
     return this.data;
   }
   async getData(): Promise<Uint8Array> {

@@ -133,9 +133,8 @@ type ImageDataResponse struct {
 }
 
 func (app *App) GetImageData(image engine.Image) ImageDataResponse {
-	fmt.Println("[go] getting image data... for ", image)
 	data, err := image.GetData()
-	fmt.Println("Got data: [", data, "]")
+	fmt.Println("Got data: ", len(data.Data))
 	var msg string
 	if err != nil {
 		msg = fmt.Sprintf("Error getting image data: %s", err.Error())

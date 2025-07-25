@@ -20,6 +20,5 @@
     <Home />
   {/if}
 {:catch e}
-  {console.log(e)}
   <h2 class="w3-center w3-text-red w3-padding-64">Error getting engines {e}</h2>
 {/await}

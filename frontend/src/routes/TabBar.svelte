@@ -1,5 +1,6 @@
 <script lang="ts">
   import { CurrentEngineStore, EnginesStore, updateEngines } from "$lib/editor";
+  import Engine from "$lib/engine";
   import { writable } from "svelte/store";
   import OpeningFile from "./OpeningFile.svelte";
   import { open } from "$lib/open";
@@ -15,6 +16,10 @@
     }
     editorLoading.set(false);
   }
+  const engineSetter = (engine: Engine) =>
+    function () {
+      CurrentEngineStore.update((val) => (val == null ? engine : null));
+    };
 </script>
 
 <OpeningFile
@@ -31,9 +36,9 @@
         class="w3-bar-item w3-button {$CurrentEngineStore == engine
           ? 'selected'
           : ''}"
-        on:click={() => CurrentEngineStore.set(engine)}
+        on:click={engineSetter(engine)}
       >
-        {engine.file.length > 20 ? "..." + engine.file.slice(-20) : engine.file}
+        {engine.file.length > 10 ? "..." + engine.file.slice(-10) : engine.file}
       </button>
     {/each}
     <button
@@ -53,10 +58,14 @@ div.tabBar
   background-color: color.adjust(theme.$primary, $alpha: 0.4)
   color: color.adjust(theme.$on-container, $alpha: 0.4)
   backdrop-filter: blur(10px)
+  overflow-x: scroll
 button.addButton
   padding: 3px 8px !important
 button:hover
   background-color: theme.$primary
+button.selected
+  background-color: theme.$container
 button
   padding: 3px !important
+  display: inline
 </style>

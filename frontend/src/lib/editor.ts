@@ -3,8 +3,8 @@ import type { Writable } from 'svelte/store';
 import Engine from './engine';
 import { GetEngines } from './wailsjs/go/app/App';
 
-export let CurrentEngineStore: Writable<Engine | null> = writable(null);
-export let EnginesStore: Writable<Engine[]> = writable([]);
+export const CurrentEngineStore: Writable<Engine | null> = writable(null);
+export const EnginesStore: Writable<Engine[]> = writable([]);
 
 export async function updateEngines() {
   const engines = await GetEngines();
