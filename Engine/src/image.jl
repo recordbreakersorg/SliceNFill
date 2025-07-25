@@ -14,18 +14,20 @@ mutable struct Image
   Image(w::Int, h::Int) = new(Matrix{Pix}(undef, w, h), w, h)
 end
 
-function setdata!(img::Image, data::String)
+function setdata!(img::Image, data::Vector{UInt8})
   if length(data) != img.width * img.height * 4
-    echo("Data length does not match image dimensions")
+    echo("Data length($(length(data))) does not match image dimensions $(img.width) x $(img.height) x 4 (expected $(img.width * img.height * 4))")
     return false
+  else
+    echo("Verifying data length: ", length(data), " matches image dimensions: ", img.width, " x ", img.height)
   end
   idx = 1
   for y in 1:img.height, x in 1:img.width # list of rows
     img.data[x, y] = Pix(
-      UInt8(data[idx]),
-      UInt8(data[idx + 1]),
-      UInt8(data[idx + 2]),
-      UInt8(data[idx + 3])
+      data[idx + 0],
+      data[idx + 1],
+      data[idx + 2],
+      data[idx + 3]
     )
     idx += 4
   end

@@ -1,6 +1,9 @@
 package app
 
-import "slicenfill/engine"
+import (
+	"fmt"
+	"slicenfill/engine"
+)
 
 var (
 	engines     = make(map[int]engine.Engine)
@@ -10,5 +13,6 @@ var (
 func AddEngine(engine *engine.Engine) int {
 	counter++
 	engines[counter] = *engine
+	fmt.Println("Engines: ", engines)
 	return counter
 }

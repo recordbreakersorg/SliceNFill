@@ -6,7 +6,7 @@ import (
 )
 
 type ImageData struct {
-	Data   []uint8 // RGBA data in 8-bit per channel format
+	Data   []uint8
 	Width  int
 	Height int
 }
@@ -28,14 +28,16 @@ func LoadImageData(path string) (ImageData, error) {
 	width, height := bounds.Dx(), bounds.Dy()
 
 	data := make([]uint8, width*height*4)
-	for y := range height {
-		for x := range width {
+	idx := 0
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
 			pix := img.At(x, y)
 			r, g, b, a := pix.RGBA()
-			data[y*width*4+x*4+0] = uint8(r >> 8) // Convert to 8-bit
-			data[y*width*4+x*4+1] = uint8(g >> 8)
-			data[y*width*4+x*4+2] = uint8(b >> 8)
-			data[y*width*4+x*4+3] = uint8(a >> 8)
+			data[idx+0] = uint8(r >> 8)
+			data[idx+1] = uint8(g >> 8)
+			data[idx+2] = uint8(b >> 8)
+			data[idx+3] = uint8(a >> 8)
+			idx += 4
 		}
 	}
 

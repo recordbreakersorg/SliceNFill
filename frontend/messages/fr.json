@@ -3,5 +3,6 @@
   "error": {
     "opening_file": "Error opening file {fileName}: {message}"
   },
-  "open_file": "Open file"
+  "open_file": "Open file",
+  "retry": "Retry"
 }

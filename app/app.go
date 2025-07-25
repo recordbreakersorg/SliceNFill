@@ -4,6 +4,7 @@ package app
 import (
 	"context"
 	"embed"
+	"fmt"
 	"slicenfill/engine"
 
 	"github.com/wailsapp/wails/v2"
@@ -45,8 +46,8 @@ func (app *App) Startup(ctx context.Context) {
 func (app *App) Run() error {
 	return wails.Run(&options.App{
 		Title:  "Slice & Fill",
-		Width:  600,
-		Height: 400,
+		Width:  800,
+		Height: 600,
 		AssetServer: &assetserver.Options{
 			Assets: app.assets,
 		},
@@ -59,22 +60,89 @@ func (app *App) Run() error {
 }
 
 type CreateEngineResponse struct {
-	EngineID int    `json:"engineID"`
-	Error    string `json:"error,omitempty"`
+	Engine EngineInfo `json:"engine"`
+	Error  string     `json:"error,omitempty"`
 }
 
 func (app *App) CreateEngine(path string) CreateEngineResponse {
-	engine, err := engine.NewEngine(path)
+	fmt.Println("[go] CreateEngine")
+	newEngine, err := engine.NewEngine(path)
 	if err != nil {
 		return CreateEngineResponse{
-			EngineID: 0,
-			Error:    err.Error(),
+			Error: err.Error(),
 		}
 	} else {
-		EngineID := AddEngine(engine)
+		EngineID := AddEngine(newEngine)
 		return CreateEngineResponse{
-			EngineID: EngineID,
-			Error:    "",
+			Engine: EngineInfo{
+				Engine: *newEngine,
+				ID:     EngineID,
+			},
+			Error: "",
 		}
+	}
+}
+
+func (app *App) GetEngines() []EngineInfo {
+	var infos []EngineInfo
+	for id, engine := range engines {
+		infos = append(infos, EngineInfo{
+			Engine: engine,
+			ID:     id,
+		})
+	}
+	return infos
+}
+
+func (app *App) GetEngineByFileName(fileName string) *int {
+	for id, engine := range engines {
+		if engine.FilePath == fileName {
+			return &id
+		}
+	}
+	return nil
+}
+
+type EngineInfo struct {
+	Engine engine.Engine `json:"engine"`
+	ID     int           `json:"id"`
+	Exists bool          `json:"exists"`
+}
+
+func (app *App) GetEngineByID(id int) EngineInfo {
+	engine, exists := engines[id]
+	if !exists {
+		return EngineInfo{Exists: false}
+	}
+	return EngineInfo{
+		Engine: engine,
+		ID:     id,
+		Exists: true,
+	}
+}
+
+type ImageInfo struct {
+	ID   int     `json:"id"`
+	Data []uint8 `json:"data"`
+}
+
+type ImageDataResponse struct {
+	Image engine.Image `json:"image"`
+	Data  []uint8      `json:"data"`
+	Error string       `json:"error,omitempty"`
+}
+
+func (app *App) GetImageData(image engine.Image) ImageDataResponse {
+	fmt.Println("[go] getting image data... for ", image)
+	data, err := image.GetData()
+	fmt.Println("Got data: [", data, "]")
+	var msg string
+	if err != nil {
+		msg = fmt.Sprintf("Error getting image data: %s", err.Error())
+	}
+	return ImageDataResponse{
+		Data:  data.Data,
+		Image: image,
+		Error: msg,
 	}
 }

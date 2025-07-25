@@ -6,16 +6,35 @@ import (
 	_ "image/jpeg"
 	_ "image/png" // Register the PNG, JPEG, and GIF decoders
 )
+import "fmt"
 
 type Image struct {
-	ID uint8
+	ID            uint
+	Width, Height int
 }
 
-func LoadImage(path string) (Image, error) {
+func OpenImage(path string) (Image, error) {
+	fmt.Println("Loading image from path:", path)
 	data, err := LoadImageData(path)
 	if err != nil {
 		return Image{}, err
 	}
-	imageID := createImage(string(data.Data), data.Width, data.Height)
-	return Image{ID: uint8(imageID)}, nil
+	imageID := createImage(data.Data, data.Width, data.Height)
+	return Image{
+		ID:     imageID,
+		Width:  data.Width,
+		Height: data.Height,
+	}, nil
+}
+
+func (img *Image) GetData() (ImageData, error) {
+	data := getImageData(img.ID, img.Height*img.Width*4)
+	if data == nil {
+		return ImageData{}, fmt.Errorf("image data not found for ID %d", img.ID)
+	}
+	return ImageData{
+		Data:   data,
+		Width:  img.Width,
+		Height: img.Height,
+	}, nil
 }

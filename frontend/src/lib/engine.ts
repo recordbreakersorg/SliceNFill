@@ -1,34 +1,42 @@
-import { goto } from "$app/navigation";
+import Img from "./img";
+import { CreateEngine, GetEngineByFileName, GetEngines } from "./wailsjs/go/app/App";
+import { app } from "./wailsjs/go/models";
 export default class Engine {
   id: number;
-  constructor(id: number) {
+  file: string;
+  image: Img;
+  constructor(id: number, path: string, image: Img) {
     this.id = id;
+    this.file = path;
+    this.image = image;
   }
-  static async createEngine(filepath: string): Promise<Engine> {
-    return new Engine(await Engine.create(filepath));
+  static fromInfo(info: app.EngineInfo): Engine {
+    return new Engine(info.id, info.engine.FilePath, Img.fromGO(info.engine.Image));
   }
-  static async getOrCreate(filepath: string): Promise<number> {
-    const msg: number | string = await Engine.create(filepath);
-    if (typeof msg === 'string') {
-      console.error(msg);
-      throw new Error(msg);
+  static async getByFileName(fileName: string): Promise<Engine | null> {
+    let info = await GetEngineByFileName(fileName)
+    if (info.error) {
+      throw new Error(info.error);
+    } if (info.exists) {
+      return Engine.fromInfo(info);
     } else {
-      return msg;
+      return null;
     }
   }
-  static async getOrCreateEngine(filepath: string): Promise<Engine> {
-    const id = await Engine.getOrCreate(filepath);
-    return new Engine(id);
+  static async create(filepath: string): Promise<Engine> {
+    console.log("Creating engine");
+    let response: app.CreateEngineResponse = await CreateEngine(filepath)
+    console.log("Engine created", response);
+    if (response.error) {
+      throw new Error(response.error);
+    } else {
+      return Engine.fromInfo(response.engine);
+    }
   }
-  static async get(id: number): Promise<Engine | null> {
-    return null;
-  }
-  static async create(filepath: string): Promise<number> {
-    await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(null);
-      }, 100000);
-    });
-    return 0;
+  static async getEngines(): Promise<Engine[]> {
+    let infos: app.EngineInfo[] = await GetEngines();
+    console.error("Got engines info", infos)
+    return infos.map(Engine.fromInfo);
   }
 }
+
