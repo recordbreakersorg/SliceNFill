@@ -1,4 +1,3 @@
-// typedef unsigned int *ImageData;
 #define ImageData void *
 void initEngine();
 unsigned int createImage(ImageData data, unsigned int size, unsigned int width,

@@ -6,6 +6,7 @@
   import { open } from "$lib/open";
   import OpeningFile from "./OpeningFile.svelte";
   import TabBar from "./TabBar.svelte";
+  import Menu from "./editor/Menu.svelte";
   let editorLoading: Writable<boolean> = writable(false);
   let editorLoadingError: Writable<null | string> = writable(null);
 
@@ -37,9 +38,9 @@
 />
 <main>
   <header>
+    <Menu editor={null} />
     <TabBar />
   </header>
-
   <div class="hero w3-container w3-padding-64">
     <h1 class="w3-jumbo w3-center">
       Slice'<span class="w3-text-teal">n</span>'Fill

@@ -13,8 +13,8 @@
 
 <main>
   <header>
-    <TabBar />
     <Menu {editor} />
+    <TabBar />
   </header>
   {#if $editorMode == EditorMode.Normal}
     <EmptyView {editor} />

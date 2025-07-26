@@ -1,11 +1,11 @@
-// Package app provides the application logic for the app
-package app
+// Package backend provides the application logic for the app
+package backend
 
 import (
+	"C"
 	"context"
 	"embed"
 	"fmt"
-	"slicenfill/engine"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -13,9 +13,18 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+func (app *App) AddEngine(engine *Engine) int {
+	app.enginesCounter++
+	app.Engines[app.enginesCounter] = *engine
+	fmt.Println("Engines: ", app.Engines)
+	return app.enginesCounter
+}
+
 type App struct {
-	ctx    context.Context
-	assets embed.FS
+	ctx            context.Context
+	assets         embed.FS
+	Engines        map[int]Engine
+	enginesCounter int
 }
 
 // OpenFile opens a file dialog and returns the selected file path.
@@ -66,13 +75,13 @@ type CreateEngineResponse struct {
 
 func (app *App) CreateEngine(path string) CreateEngineResponse {
 	fmt.Println("[go] CreateEngine")
-	newEngine, err := engine.NewEngine(path)
+	newEngine, err := NewEngine(path)
 	if err != nil {
 		return CreateEngineResponse{
 			Error: err.Error(),
 		}
 	} else {
-		EngineID := AddEngine(newEngine)
+		EngineID := app.AddEngine(newEngine)
 		return CreateEngineResponse{
 			Engine: EngineInfo{
 				Engine: *newEngine,
@@ -85,7 +94,7 @@ func (app *App) CreateEngine(path string) CreateEngineResponse {
 
 func (app *App) GetEngines() []EngineInfo {
 	var infos []EngineInfo
-	for id, engine := range engines {
+	for id, engine := range app.Engines {
 		infos = append(infos, EngineInfo{
 			Engine: engine,
 			ID:     id,
@@ -95,7 +104,7 @@ func (app *App) GetEngines() []EngineInfo {
 }
 
 func (app *App) GetEngineByFileName(fileName string) *int {
-	for id, engine := range engines {
+	for id, engine := range app.Engines {
 		if engine.FilePath == fileName {
 			return &id
 		}
@@ -104,13 +113,13 @@ func (app *App) GetEngineByFileName(fileName string) *int {
 }
 
 type EngineInfo struct {
-	Engine engine.Engine `json:"engine"`
-	ID     int           `json:"id"`
-	Exists bool          `json:"exists"`
+	Engine Engine `json:"engine"`
+	ID     int    `json:"id"`
+	Exists bool   `json:"exists"`
 }
 
 func (app *App) GetEngineByID(id int) EngineInfo {
-	engine, exists := engines[id]
+	engine, exists := app.Engines[id]
 	if !exists {
 		return EngineInfo{Exists: false}
 	}
@@ -127,12 +136,12 @@ type ImageInfo struct {
 }
 
 type ImageDataResponse struct {
-	Image engine.Image `json:"image"`
-	Data  []uint8      `json:"data"`
-	Error string       `json:"error,omitempty"`
+	Image Image   `json:"image"`
+	Data  []uint8 `json:"data"`
+	Error string  `json:"error,omitempty"`
 }
 
-func (app *App) GetImageData(image engine.Image) ImageDataResponse {
+func (app *App) GetImageData(image Image) ImageDataResponse {
 	data, err := image.GetData()
 	var msg string
 	if err != nil {
@@ -147,9 +156,9 @@ func (app *App) GetImageData(image engine.Image) ImageDataResponse {
 }
 
 func (app *App) DestroyEngine(id int) {
-	engine, exists := engines[id]
+	engine, exists := app.Engines[id]
 	if exists {
 		engine.Destroy()
-		delete(engines, id)
+		delete(app.Engines, id)
 	}
 }

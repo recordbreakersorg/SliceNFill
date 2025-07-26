@@ -1,7 +1,7 @@
 <script lang="ts">
   import type Editor from "$lib/editor";
 
-  export let editor: Editor;
+  export let editor: Editor | null;
 </script>
 
 <div class="w3-bar">
@@ -16,6 +16,6 @@
 
 <style lang="sass">
   button.w3-button
-    padding: 3px 18px
+    padding: 3px 8px
     text-align: center
 </style>

@@ -24,13 +24,17 @@
 </script>
 
 <div class="container">
-  <canvas bind:this={canvas} {width} {height}></canvas>
+  <canvas class="w3-card" bind:this={canvas} {width} {height}></canvas>
 </div>
 
 <style lang="sass">
 div.container
   width: 100%
+  margin: auto
+  padding: auto
   canvas
-    max-width: 100%
-    max-height: 100%
+    max-width: 1000px
+    max-height: 650px
+    margin: auto
+    padding: auto
 </style>

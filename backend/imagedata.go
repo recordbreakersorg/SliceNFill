@@ -1,4 +1,4 @@
-package engine
+package backend
 
 import (
 	"fmt"
@@ -30,8 +30,8 @@ func LoadImageData(path string) (ImageData, error) {
 
 	data := make([]uint8, width*height*4)
 	idx := 0
-	for y := 0; y < height; y++ {
-		for x := 0; x < width; x++ {
+	for y := range height {
+		for x := range width {
 			pix := img.At(x, y)
 			r, g, b, a := pix.RGBA()
 			data[idx+0] = uint8(r >> 8)

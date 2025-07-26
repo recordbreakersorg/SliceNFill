@@ -5,6 +5,11 @@
   import TabBar from "./TabBar.svelte";
   import { updateEngines } from "$lib/editor";
   import CircularProgress from "$lib/components/CircularProgress.svelte";
+  import type Engine from "$lib/engine";
+  import { writable } from "svelte/store";
+
+  CurrentEngineStore.subscribe(function (newEngine: Engine | null) {});
+  const editorOpen = writable(true);
 </script>
 
 {#await updateEngines()}

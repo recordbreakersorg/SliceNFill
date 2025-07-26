@@ -1,5 +1,4 @@
-// Package engine provides the core functionality for the application.
-package engine
+package backend
 
 type Engine struct {
 	FilePath string

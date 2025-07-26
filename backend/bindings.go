@@ -1,4 +1,4 @@
-package engine
+package backend
 
 /*
 #cgo LDFLAGS: -L.. -Wl,-rpath,$ORIGIN -lengine
