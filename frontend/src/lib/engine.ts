@@ -1,6 +1,6 @@
 import Img from "./img";
-import { CreateEngine, DestroyEngine, GetEngineByFileName, GetEngines } from "./wailsjs/go/app/App";
-import { app } from "./wailsjs/go/models";
+import { CreateEngine, DestroyEngine, GetEngineByFileName, GetEngines } from "./wailsjs/go/backend/App";
+import { backend } from "./wailsjs/go/models";
 export default class Engine {
   id: number;
   file: string;
@@ -13,7 +13,7 @@ export default class Engine {
   async destroy(): Promise<void> {
     await DestroyEngine(this.id);
   }
-  static fromInfo(info: app.EngineInfo): Engine {
+  static fromInfo(info: backend.EngineInfo): Engine {
     return new Engine(info.id, info.engine.FilePath, Img.fromGO(info.engine.Image));
   }
   static async getByFileName(fileName: string): Promise<Engine | null> {
@@ -28,7 +28,7 @@ export default class Engine {
   }
   static async create(filepath: string): Promise<Engine> {
     console.log("Creating engine");
-    let response: app.CreateEngineResponse = await CreateEngine(filepath)
+    let response: backend.CreateEngineResponse = await CreateEngine(filepath)
     console.log("Engine created", response);
     if (response.error) {
       throw new Error(response.error);
@@ -37,7 +37,7 @@ export default class Engine {
     }
   }
   static async getEngines(): Promise<Engine[]> {
-    let infos: app.EngineInfo[] = await GetEngines();
+    let infos: backend.EngineInfo[] = await GetEngines();
     console.error("Got engines info", infos)
     return infos.map(Engine.fromInfo);
   }

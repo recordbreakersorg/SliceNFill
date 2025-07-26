@@ -1,5 +1,5 @@
-import { GetImageData } from "./wailsjs/go/app/App";
-import { engine } from "./wailsjs/go/models";
+import { GetImageData } from "./wailsjs/go/backend/App";
+import { backend } from "./wailsjs/go/models";
 
 export default class Image {
   data: Uint8Array | null;
@@ -12,11 +12,11 @@ export default class Image {
     this.width = width;
     this.height = height;
   }
-  static fromGO(img: engine.Image): Image {
+  static fromGO(img: backend.Image): Image {
     return new Image(img.ID, img.Width, img.Height);
   }
-  toGO(): engine.Image {
-    return new engine.Image({ ID: this.id, Width: this.width, Height: this.height });
+  toGO(): backend.Image {
+    return new backend.Image({ ID: this.id, Width: this.width, Height: this.height });
   }
   async load(): Promise<Uint8Array> {
     // @ts-ignore

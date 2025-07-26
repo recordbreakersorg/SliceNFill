@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import Engine from './engine';
-import { GetEngines } from './wailsjs/go/app/App';
+import { GetEngines } from './wailsjs/go/backend/App';
 
 export const CurrentEngineStore: Writable<Engine | null> = writable(null);
 export const EnginesStore: Writable<Engine[]> = writable([]);

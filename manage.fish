@@ -1,10 +1,20 @@
 #!/usr/bin/fish
+#
+
+function set-env
+    export LD_LIBRARY_PATH=.
+end
 
 function build-engine
     julia +nightly --depwarn=error --project=Engine/ juliac/juliac.jl --experimental --compile-ccallable --output-lib libengine.so --trim=safe Engine/src/lib.jl
 end
 function dev
+    set-env
     wails dev -tags webkit2_41
+end
+function build
+    set-env
+    wails build -tags webkit2_41
 end
 
 set usage "use as: ./manage.fish build-engine"

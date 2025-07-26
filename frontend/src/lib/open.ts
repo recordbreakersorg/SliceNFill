@@ -1,6 +1,6 @@
 import Engine from "./engine";
 import { EnginesStore, CurrentEngineStore } from "./editor";
-import { OpenFile } from "./wailsjs/go/app/App";
+import { OpenFile } from "./wailsjs/go/backend/App";
 export async function* open(path: string | null = null): AsyncGenerator<boolean | string> {
   console.log("[open.js] Opening engine with path:", path);
   yield true;
