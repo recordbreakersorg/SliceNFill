@@ -28,16 +28,29 @@ func (app *App) startup(ctx context.Context) {
 	app.ctx = ctx
 }
 
+func (app *App) shutdown(ctx context.Context) {
+}
+
+func (app *App) onsecondlaunch(info options.SecondInstanceData) {
+}
+
 func (app *App) Run() error {
 	return wails.Run(&options.App{
 		Title:  "slicenfill",
-		Width:  1024,
-		Height: 768,
+		Width:  600,
+		Height: 400,
 		AssetServer: &assetserver.Options{
 			Assets: app.assets,
 		},
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		BackgroundColour: &options.RGBA{R: 10, G: 20, B: 30, A: 1},
 		OnStartup:        app.startup,
+		OnShutdown:       app.shutdown,
+		SingleInstanceLock: &options.SingleInstanceLock{
+			UniqueId:               "cm.rbs.slicenfill",
+			OnSecondInstanceLaunch: app.onsecondlaunch,
+		},
+		MinWidth:  500,
+		MinHeight: 400,
 		Bind: []any{
 			app,
 		},
