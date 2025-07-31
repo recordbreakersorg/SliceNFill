@@ -9,7 +9,7 @@ The electron alternative for Go
 */
 
 export interface Position {
-   x: number;
+    x: number;
     y: number;
 }
 

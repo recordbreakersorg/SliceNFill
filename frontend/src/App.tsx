@@ -1,13 +1,14 @@
 import TabBar from "./TabBar/TabBar";
-import Editor from "./Editor/Editor";
+import EditorComponent from "./Editor/Editor";
 import { useState } from "react";
+import Editor from "./lib/editor";
 
 export default function App() {
-  const [editor, setEditor] = useState(null);
+  const [editor, setEditor] = useState<Editor | null>(null);
   return (
     <main className="w3-theme-dark">
-      <TabBar />
-      <Editor />
+      <TabBar currentEditor={editor} />
+      <EditorComponent editor={editor} />
     </main>
   );
 }

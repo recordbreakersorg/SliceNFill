@@ -1,6 +1,6 @@
 #!/usr/bin/fish
 
-set global_tags [webkit2_41]
+set global_tags webkit2_41
 
 function dev
     wails dev -tags $global_tags
