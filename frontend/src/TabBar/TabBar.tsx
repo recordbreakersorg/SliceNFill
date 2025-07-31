@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 
 export default function TabBar({
   currentEditor,
+  setEditor,
 }: {
   currentEditor: Editor | null;
+  setEditor: Function;
 }) {
   const [editors, setEditors] = useState<Editor[]>([]);
   useEffect(() => {
@@ -15,6 +17,11 @@ export default function TabBar({
       setEditors(editors);
     });
   });
+  function openFiles() {
+    Editor.askOpenFiles().then((newEditors) => {
+      setEditors(editors.concat(newEditors));
+    });
+  }
   return (
     <div className="w3-bar">
       {editors.map((editor) => (
@@ -23,19 +30,18 @@ export default function TabBar({
             "w3-button w3-bar-item" +
             (currentEditor && currentEditor.id == editor.id ? " selected" : "")
           }
+          onClick={() => setEditor(editor)}
         >
-          <span>{editor.file}</span>
-          <span>
-            <FontAwesomeIcon
-              icon={faClose}
-              size="2xs"
-              className="w3-theme-d5"
-            />
+          <span className="title">
+            {editor.file.split("/").at(-1)?.split("\\").at(-1)}
+          </span>
+          <span className="close">
+            <FontAwesomeIcon icon={faClose} size="lg" className="w3-theme-d5" />
           </span>
         </button>
       ))}
-      <button className="w3-button w3-bar-item">
-        <FontAwesomeIcon size="2xs" icon={faAdd} />
+      <button className="w3-button w3-bar-item add" onClick={openFiles}>
+        <FontAwesomeIcon size="sm" icon={faAdd} className="icon" />
       </button>
     </div>
   );

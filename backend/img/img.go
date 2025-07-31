@@ -1,3 +1,4 @@
+// Package img handles image files opening, saving, conversion
 package img
 
 import (
@@ -11,7 +12,6 @@ import (
 	"strings"
 	"sync/atomic"
 
-	_ "github.com/Kagami/go-avif"  // avif
 	_ "github.com/srwiley/oksvg"   // svg
 	_ "github.com/srwiley/rasterx" // svg
 	_ "golang.org/x/image/bmp"     // bmp
@@ -19,7 +19,10 @@ import (
 	_ "golang.org/x/image/webp"    // webp
 )
 
-var imageIDCounter uint64
+var (
+	imageIDCounter uint64
+	images         []Image
+)
 
 type Image struct {
 	ID     uint
@@ -27,6 +30,22 @@ type Image struct {
 	Width  uint
 	Height uint
 	Format ImageFormat
+}
+
+type ImageInfo struct {
+	ID     uint
+	Width  uint
+	Height uint
+	Format ImageFormat
+}
+
+func (info *ImageInfo) GetImage() (Image, bool) {
+	for _, image := range images {
+		if image.ID == info.ID {
+			return image, true
+		}
+	}
+	return Image{}, false
 }
 
 // OpenImage opens an image from file path
@@ -75,13 +94,15 @@ func OpenImageFromReader(reader io.Reader, format ImageFormat) (Image, error) {
 	// Generate unique ID
 	id := atomic.AddUint64(&imageIDCounter, 1)
 
-	return Image{
+	newImage := Image{
 		ID:     uint(id),
 		Raw:    img,
 		Width:  uint(bounds.Dx()),
 		Height: uint(bounds.Dy()),
 		Format: format,
-	}, nil
+	}
+	images = append(images, newImage)
+	return newImage, nil
 }
 
 // SaveImage saves an image to file with specified format and quality

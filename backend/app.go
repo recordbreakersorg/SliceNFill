@@ -3,10 +3,12 @@ package backend
 import (
 	"context"
 	"embed"
+	"slicenfill/backend/editor"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -42,7 +44,7 @@ func (app *App) Run() error {
 		AssetServer: &assetserver.Options{
 			Assets: app.assets,
 		},
-		BackgroundColour: &options.RGBA{R: 10, G: 20, B: 30, A: 1},
+		BackgroundColour: &options.RGBA{R: 10, G: 20, B: 30, A: 0},
 		OnStartup:        app.startup,
 		OnShutdown:       app.shutdown,
 		SingleInstanceLock: &options.SingleInstanceLock{
@@ -55,4 +57,40 @@ func (app *App) Run() error {
 			app,
 		},
 	})
+}
+
+func (app *App) AskOpenImages() ([]editor.Editor, error) {
+	files, err := runtime.OpenMultipleFilesDialog(app.ctx, runtime.OpenDialogOptions{
+		Title: "Open image file(s)",
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "Portable network graphics file",
+				Pattern:     "*.png",
+			},
+			{
+				DisplayName: "Bitmap Image",
+				Pattern:     "*.bmp",
+			},
+			{
+				DisplayName: "Scalabe Vector Graphics",
+				Pattern:     "*.svg",
+			},
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	var editors []editor.Editor
+	for _, file := range files {
+		editor, err := editor.CreateEditor(file)
+		editors = append(editors, editor)
+		if err != nil {
+			return editors, err
+		}
+	}
+	return editors, nil
+}
+
+func (app *App) GetEditors() []editor.Editor {
+	return editor.GetEditors()
 }

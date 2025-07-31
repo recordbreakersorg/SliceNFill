@@ -1,8 +1,11 @@
+// Package editor: Base editor interfaces, structures and functions
 package editor
 
 import (
 	"slicenfill/backend/img"
 	"sync/atomic"
+
+	"github.com/wailsapp/wails/v2/pkg/options"
 )
 
 var (
@@ -10,11 +13,25 @@ var (
 	editors         []Editor
 )
 
+type EditorParamsColors struct {
+	Primary   []options.RGBA
+	Secondary []options.RGBA
+}
+
+type EditorParams struct {
+	Colors EditorParamsColors
+}
+
 type Editor struct {
 	ID         uint64
 	File       string
 	Stack      []img.Image
 	StackIndex uint
+	Params     EditorParams
+}
+
+func GetEditors() []Editor {
+	return editors
 }
 
 func CreateEditor(path string) (Editor, error) {

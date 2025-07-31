@@ -1,0 +1,86 @@
+.w3-tooltip
+  position: relative
+  display: inline-block
+
+.w3-tooltip .w3-tooltip-text
+  visibility: hidden
+  width: 120px
+  background-color: #555
+  color: #fff
+  text-align: center
+  border-radius: 6px
+  padding: 5px 0
+  position: absolute
+  z-index: 1
+  opacity: 0
+  transition: opacity 0.3s
+
+.w3-tooltip:hover .w3-tooltip-text
+  visibility: visible
+  opacity: 1
+
+// Top Tooltip (Default)
+.w3-tooltip .w3-tooltip-top
+  bottom: 125%
+  left: 50%
+  margin-left: -60px
+
+.w3-tooltip .w3-tooltip-top::after
+  content: ""
+  position: absolute
+  top: 100%
+  left: 50%
+  margin-left: -5px
+  border-width: 5px
+  border-style: solid
+  border-color: #555 transparent transparent transparent
+
+// Right Tooltip
+.w3-tooltip .w3-tooltip-right
+  top: 50%
+  left: 105%
+  transform: translateY(-50%)
+  margin-left: 0
+
+.w3-tooltip .w3-tooltip-right::after
+  content: ""
+  position: absolute
+  top: 50%
+  right: 100%
+  margin-top: -5px
+  border-width: 5px
+  border-style: solid
+  border-color: transparent #555 transparent transparent
+
+// Left Tooltip
+.w3-tooltip .w3-tooltip-left
+  top: 50%
+  right: 105%
+  transform: translateY(-50%)
+  margin-left: 0
+
+.w3-tooltip .w3-tooltip-left::after
+  content: ""
+  position: absolute
+  top: 50%
+  left: 100%
+  margin-top: -5px
+  border-width: 5px
+  border-style: solid
+  border-color: transparent transparent transparent #555
+
+// Bottom Tooltip
+.w3-tooltip .w3-tooltip-bottom
+  top: 125%
+  left: 50%
+  margin-left: -60px
+
+.w3-tooltip .w3-tooltip-bottom::after
+  content: ""
+  position: absolute
+  bottom: 100%
+  left: 50%
+  margin-left: -5px
+  border-width: 5px
+  border-style: solid
+  border-color: transparent transparent #555 transparent

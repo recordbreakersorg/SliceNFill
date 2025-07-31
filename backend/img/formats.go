@@ -16,7 +16,7 @@ type ImageFormat struct {
 	CanWrite  bool
 }
 
-// Static array of supported formats
+// FORMATS Static array of supported formats
 var FORMATS = []ImageFormat{
 	{
 		Name:      "JPEG",
