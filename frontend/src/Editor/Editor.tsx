@@ -1,6 +1,7 @@
-import TabBar from "./TabBar/TabBar"
+import TabBar from "../TabBar/TabBar"
 
-export default function Editor({editor}:{editor: Editor | null}) {
+export default function Editor(args:any) {
+    console.log(args);
     return (
         <div id="Editor">
           Here is your editor

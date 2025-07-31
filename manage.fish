@@ -1,9 +1,9 @@
 #!/usr/bin/fish
 
-set global_tags (string split " " "-tags webkit2_41")
+set global_tags [webkit2_41]
 
 function dev
-    wails dev $global_tags
+    wails dev -tags $global_tags
 end
 
 function help

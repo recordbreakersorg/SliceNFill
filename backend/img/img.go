@@ -1,0 +1,169 @@
+package img
+
+import (
+	"fmt"
+	"image"
+	"image/gif"
+	"image/jpeg"
+	"image/png"
+	"io"
+	"os"
+	"strings"
+	"sync/atomic"
+
+	_ "github.com/Kagami/go-avif"  // avif
+	_ "github.com/srwiley/oksvg"   // svg
+	_ "github.com/srwiley/rasterx" // svg
+	_ "golang.org/x/image/bmp"     // bmp
+	_ "golang.org/x/image/tiff"    // tiff
+	_ "golang.org/x/image/webp"    // webp
+)
+
+var imageIDCounter uint64
+
+type Image struct {
+	ID     uint
+	Raw    image.Image
+	Width  uint
+	Height uint
+	Format ImageFormat
+}
+
+// OpenImage opens an image from file path
+func OpenImage(path string) (Image, error) {
+	// Check if format is supported
+	format, err := GetFormatByExtension(path)
+	if err != nil {
+		return Image{}, err
+	}
+
+	if !format.CanRead {
+		return Image{}, fmt.Errorf("format %s is not readable", format.Name)
+	}
+
+	// Open file
+	file, err := os.Open(path)
+	if err != nil {
+		return Image{}, fmt.Errorf("failed to open file: %w", err)
+	}
+	defer file.Close()
+
+	return OpenImageFromReader(file, *format)
+}
+
+// OpenImageFromReader opens an image from io.Reader with specified format
+func OpenImageFromReader(reader io.Reader, format ImageFormat) (Image, error) {
+	if !format.CanRead {
+		return Image{}, fmt.Errorf("format %s is not readable", format.Name)
+	}
+
+	// Decode image
+	img, detectedFormat, err := image.Decode(reader)
+	if err != nil {
+		return Image{}, fmt.Errorf("failed to decode image: %w", err)
+	}
+
+	// Verify format matches (optional warning)
+	expectedFormat := strings.ToLower(format.Name)
+	if detectedFormat != expectedFormat &&
+		!(expectedFormat == "jpeg" && detectedFormat == "jpeg") {
+		fmt.Printf("Warning: Expected %s but detected %s\n", expectedFormat, detectedFormat)
+	}
+
+	bounds := img.Bounds()
+
+	// Generate unique ID
+	id := atomic.AddUint64(&imageIDCounter, 1)
+
+	return Image{
+		ID:     uint(id),
+		Raw:    img,
+		Width:  uint(bounds.Dx()),
+		Height: uint(bounds.Dy()),
+		Format: format,
+	}, nil
+}
+
+// SaveImage saves an image to file with specified format and quality
+func (img *Image) SaveImage(path string, format ImageFormat, quality int) error {
+	if !format.CanWrite {
+		return fmt.Errorf("format %s is not writable", format.Name)
+	}
+
+	file, err := os.Create(path)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+	defer file.Close()
+
+	return img.SaveImageToWriter(file, format, quality)
+}
+
+// SaveImageToWriter saves an image to io.Writer with specified format and quality
+func (img *Image) SaveImageToWriter(writer io.Writer, format ImageFormat, quality int) error {
+	if !format.CanWrite {
+		return fmt.Errorf("format %s is not writable", format.Name)
+	}
+
+	switch strings.ToUpper(format.Name) {
+	case "JPEG":
+		options := &jpeg.Options{Quality: quality}
+		if quality <= 0 || quality > 100 {
+			options.Quality = 95 // Default quality
+		}
+		return jpeg.Encode(writer, img.Raw, options)
+
+	case "PNG":
+		encoder := &png.Encoder{CompressionLevel: png.BestCompression}
+		return encoder.Encode(writer, img.Raw)
+
+	case "GIF":
+		return gif.Encode(writer, img.Raw, nil)
+
+	default:
+		return fmt.Errorf("encoding for format %s not implemented", format.Name)
+	}
+}
+
+// Clone creates a copy of the image with a new ID
+func (img *Image) Clone() Image {
+	id := atomic.AddUint64(&imageIDCounter, 1)
+	return Image{
+		ID:     uint(id),
+		Raw:    img.Raw,
+		Width:  img.Width,
+		Height: img.Height,
+		Format: img.Format,
+	}
+}
+
+// GetInfo returns basic information about the image
+func (img *Image) GetInfo() map[string]interface{} {
+	return map[string]interface{}{
+		"id":       img.ID,
+		"width":    img.Width,
+		"height":   img.Height,
+		"format":   img.Format.Name,
+		"mimetype": img.Format.MimeType,
+		"canWrite": img.Format.CanWrite,
+	}
+}
+
+// Resize resizes the image (placeholder - you'd implement actual resizing logic)
+func (img *Image) Resize(newWidth, newHeight uint) error {
+	// This is a placeholder - you'd implement actual image resizing here
+	// You might use libraries like "github.com/disintegration/imaging"
+	img.Width = newWidth
+	img.Height = newHeight
+	return nil
+}
+
+// ConvertFormat converts the image to a new format
+func (img *Image) ConvertFormat(newFormat ImageFormat) error {
+	if !newFormat.CanRead {
+		return fmt.Errorf("target format %s is not supported", newFormat.Name)
+	}
+
+	img.Format = newFormat
+	return nil
+}
