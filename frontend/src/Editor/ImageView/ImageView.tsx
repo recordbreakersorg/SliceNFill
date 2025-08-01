@@ -1,12 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Color from "../../lib/color";
 import Editor, { EditorMode } from "../../lib/editor";
 import Image, { ImageInfo } from "../../lib/image";
 import "./ImageView.sass";
-let n = 0,
-  a = 0,
-  b = 0,
-  c = 0;
+
+// --- Helper Functions ---
 
 function syncCanvasSize(canvas: HTMLCanvasElement) {
   if (
@@ -17,59 +15,10 @@ function syncCanvasSize(canvas: HTMLCanvasElement) {
     canvas.height = canvas.clientHeight;
   }
 }
-type ImageViewState =
-  | "initializing"
-  | "loading"
-  | "ready"
-  | "reloading"
-  | "unset"
-  | "error"
-  | "reloading";
 
-function drawImage(
-  canvas: HTMLCanvasElement,
-  ctx: CanvasRenderingContext2D,
-  editor: Editor,
-  imageInfo: ImageInfo,
-  offscreenCanvas: OffscreenCanvas,
-) {
-  if (!ctx || !canvas) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the main canvas
-  ctx.save(); // Save the current canvas state
+type ImageViewState = "initializing" | "loading" | "ready" | "error";
 
-  // Calculate initial centering offsets for the image
-  const centeredX =
-    canvas.width / 2 - (imageInfo.width * editor.view.scale.x) / 2;
-  const centeredY =
-    canvas.height / 2 - (imageInfo.height * editor.view.scale.y) / 2;
-
-  // Apply transformations:
-  // 1. Translate to center the image, then apply user's pan (translateX/Y)
-  // 2. Scale (zoom) the image
-  ctx.translate(
-    centeredX + editor.view.translation.x,
-    centeredY + editor.view.translation.y,
-  );
-  ctx.scale(editor.view.scale.x, editor.view.scale.y);
-
-  // Draw the offscreen canvas onto the main canvas
-  // The offscreenCanvas itself is drawn at its own (0,0) relative to the
-  // current transformed context origin.
-  ctx.drawImage(offscreenCanvas, 0, 0);
-  ctx.restore();
-}
-function drawStatus(
-  currentStatus: ImageViewState,
-  statusMessage: string,
-  canvas: HTMLCanvasElement,
-  ctx: CanvasRenderingContext2D,
-) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.font = "16px sans-serif";
-  ctx.fillStyle = currentStatus === "error" ? "#f87171" : "#a0aec0"; // Red for error, gray for waiting
-  ctx.textAlign = "center";
-  ctx.fillText(statusMessage, canvas.width / 2, canvas.height / 2);
-}
+// --- Component ---
 
 export default function ImageView({
   imageInfo,
@@ -78,210 +27,243 @@ export default function ImageView({
   imageInfo: ImageInfo;
   editor: Editor;
 }) {
-  let ctx: CanvasRenderingContext2D | null = null;
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const offscreenCanvasRef = useRef<OffscreenCanvas | null>(null);
   const [status, setStatus] = useState<ImageViewState>("initializing");
-  const offscreenCanvas: OffscreenCanvas = new OffscreenCanvas(
-    imageInfo.width,
-    imageInfo.height,
-  );
-  const oCtx: OffscreenCanvasRenderingContext2D = offscreenCanvas.getContext(
-    "2d",
-  ) as OffscreenCanvasRenderingContext2D;
 
-  if (!oCtx)
-    return (
-      <p>Error loading offscreen canvas context. This should not happen.</p>
-    );
-  const draw = () =>
-    drawImage(canvasRef.current!, ctx!, editor, imageInfo, offscreenCanvas);
-  function debouncedRedraw() {
-    syncCanvasSize(canvasRef.current!);
-    draw();
-  }
-  let isDragging: boolean = false;
+  // Refs for interaction state to avoid re-renders on every change
+  const isDraggingRef = useRef(false);
+  const lastMousePosRef = useRef({ x: 0, y: 0 });
+  const mouseDownInfoRef = useRef<{
+    x: number;
+    y: number;
+    time: number;
+  } | null>(null);
+  const animationFrameIdRef = useRef<number | null>(null);
 
-  let downat: number = 0;
-  let downVect: number = 0;
-  let lastMouseX: number = 0,
-    lastMouseY: number = 0;
-
-  function imageClickAt(
-    px: number,
-    py: number,
-    e: MouseEvent,
-    touchedColor: Color,
-  ) {
-    switch (editor.mode.getValue()) {
-      case EditorMode.Pick:
-        console.log("setting color to", touchedColor);
-        if (!e.shiftKey) {
-          editor.params.colors.update((colors) =>
-            colors.primary.push(touchedColor),
-          );
-        } else {
-          editor.params.colors.update((colors) =>
-            colors.secondary.push(touchedColor),
-          );
-        }
-        break;
-      case EditorMode.Fill:
-        console.log("[js:view] Querying floodfill");
-        break;
-      case EditorMode.Replace:
-        console.log("[js:view] Querying replaceColor");
-    }
-  }
-
-  function canvasClick(e: MouseEvent) {
+  // The main drawing function, wrapped in useCallback for performance
+  const draw = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!ctx || !oCtx || !offscreenCanvas || !canvas) {
-      console.warn("Canvas context or offscreen canvas/image data not ready.");
+    const offscreenCanvas = offscreenCanvasRef.current;
+    if (!canvas || !offscreenCanvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Cancel any pending animation frame to avoid multiple draw calls
+    if (animationFrameIdRef.current) {
+      cancelAnimationFrame(animationFrameIdRef.current);
+    }
+
+    animationFrameIdRef.current = requestAnimationFrame(() => {
+      syncCanvasSize(canvas);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+
+      const { scale, translation } = editor.view;
+      const centeredX = canvas.width / 2 - (imageInfo.width * scale.x) / 2;
+      const centeredY = canvas.height / 2 - (imageInfo.height * scale.y) / 2;
+
+      ctx.translate(centeredX + translation.x, centeredY + translation.y);
+      ctx.scale(scale.x, scale.y);
+      ctx.drawImage(offscreenCanvas, 0, 0);
+      ctx.restore();
+    });
+  }, [editor, imageInfo]);
+
+  // Effect for initializing the offscreen canvas and loading the image
+  useEffect(() => {
+    setStatus("loading");
+    const offscreenCanvas = new OffscreenCanvas(
+      imageInfo.width,
+      imageInfo.height,
+    );
+    offscreenCanvasRef.current = offscreenCanvas;
+    const oCtx = offscreenCanvas.getContext("2d");
+
+    if (!oCtx) {
+      setStatus("error");
+      console.error("Could not get OffscreenCanvas 2D context.");
       return;
     }
 
-    // Get mouse click coordinates relative to the main canvas element
-    // @ts-ignore
-    const clickX = e.layerX;
-    // @ts-ignore
-    const clickY = e.layerY;
-    // Get the clicked color
-    const canvData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    imageInfo
+      .getImage()
+      .then((image: Image) => {
+        const imageData = new ImageData(
+          offscreenCanvas.width,
+          offscreenCanvas.height,
+        );
+        imageData.data.set(image.data);
+        // @ts-ignore
+        oCtx.putImageData(imageData, 0, 0);
+        setStatus("ready");
+        draw();
+      })
+      .catch((err) => {
+        setStatus("error");
+        console.error("Failed to load image data:", err);
+      });
+  }, [imageInfo, draw]);
 
-    // Calculate the starting index for the clicked pixel's RGBA data in the array
-    const clickedPixelOffset = (clickY * canvas.width + clickX) * 4;
-
-    // Get the color of the clicked pixel on the offscreen canvas
-    const r = canvData[clickedPixelOffset + 0],
-      g = canvData[clickedPixelOffset + 1],
-      b = canvData[clickedPixelOffset + 2],
-      a = canvData[clickedPixelOffset + 3];
-
-    // --- Reverse Transformations to get Offscreen Canvas Coordinates ---
-    // These steps reverse the operations performed in the `draw` function.
-
-    // 1. Calculate the current centered offsets *with* the current scale
-    const currentCenteredX =
-      canvas.width / 2 - (imageInfo.width * editor.view.scale.x) / 2;
-    const currentCenteredY =
-      canvas.height / 2 - (imageInfo.height * editor.view.scale.y) / 2;
-
-    // 2. Undo the user's pan (translateX, translateY) and the initial centering
-    // This gives us coordinates relative to the top-left of the *scaled* image
-    // on the main canvas, before any user pan.
-    const unpannedX = clickX - (currentCenteredX + editor.view.translation.x);
-    const unpannedY = clickY - (currentCenteredY + editor.view.translation.y);
-
-    // 3. Undo the scaling (zoom) to get coordinates on the original offscreen image
-    let offscreenPx = unpannedX / editor.view.scale.x;
-    let offscreenPy = unpannedY / editor.view.scale.y;
-
-    // Round to the nearest whole pixel, as image data works with integers
-    offscreenPx = Math.round(offscreenPx);
-    offscreenPy = Math.round(offscreenPy);
-
-    // Ensure calculated coordinates are within the bounds of the offscreen image
-    if (
-      offscreenPx < 0 ||
-      offscreenPx >= offscreenCanvas.width ||
-      offscreenPy < 0 ||
-      offscreenPy >= offscreenCanvas.height
-    ) {
-      return; // Click was outside the image boundaries
-    }
-
-    imageClickAt(
-      offscreenPx,
-      offscreenPy,
-      e,
-      new Color(`rgba(${r}, ${g}, ${b}, ${a / 255})`),
-    );
-  }
-
-  function handleMouseUp(e: MouseEvent) {
+  // Effect for setting up all event listeners
+  useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    isDragging = false;
-    canvas.style.cursor = "grab";
-    let theta = Math.abs(
-      downVect - Math.sqrt(e.clientX * e.clientX + e.clientY * e.clientY),
-    );
-    if (Date.now() - downat < 300 && theta < 10) {
-      canvasClick(e);
-    }
-  }
-  function handleMouseDown(e: MouseEvent) {
-    isDragging = true;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvasRef.current!.style.cursor = "grabbing";
+    if (!canvas || status !== "ready") return;
 
-    lastMouseX = e.clientX;
-    lastMouseY = e.clientY;
-    canvas.style.cursor = "grabbing";
-    downat = Date.now();
-    downVect = Math.sqrt(lastMouseX * lastMouseX + lastMouseY * lastMouseY);
-  }
-  function handleMouseMove(e: MouseEvent) {
-    if (!isDragging) return;
+    const getTransformedMouseCoords = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
 
-    const deltaX = e.clientX - lastMouseX;
-    const deltaY = e.clientY - lastMouseY;
+      const { scale, translation } = editor.view;
+      const centeredX = canvas.width / 2 - (imageInfo.width * scale.x) / 2;
+      const centeredY = canvas.height / 2 - (imageInfo.height * scale.y) / 2;
 
-    if (e.ctrlKey) {
-      const zoomFactor = 1 + deltaX * 0.005;
+      const unpannedX = clickX - (centeredX + translation.x);
+      const unpannedY = clickY - (centeredY + translation.y);
+
+      const offscreenX = Math.round(unpannedX / scale.x);
+      const offscreenY = Math.round(unpannedY / scale.y);
+
+      return { offscreenX, offscreenY };
+    };
+
+    const handleImageClick = (e: MouseEvent) => {
+      const { offscreenX, offscreenY } = getTransformedMouseCoords(e);
+
+      if (
+        offscreenX < 0 ||
+        offscreenX >= imageInfo.width ||
+        offscreenY < 0 ||
+        offscreenY >= imageInfo.height
+      ) {
+        return; // Click was outside the image
+      }
+
+      const oCtx = offscreenCanvasRef.current?.getContext("2d");
+      if (!oCtx) return;
+
+      // @ts-ignore
+      const pixelData = oCtx.getImageData(offscreenX, offscreenY, 1, 1).data;
+      const color = new Color(
+        `rgba(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]}, ${
+          pixelData[3] / 255
+        })`,
+      );
+
+      switch (editor.mode.getValue()) {
+        case EditorMode.Pick:
+          editor.params.colors.update((colors) => {
+            if (e.shiftKey) colors.secondary.push(color);
+            else colors.primary.push(color);
+            return colors;
+          });
+          break;
+        // ... other editor modes
+      }
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      e.preventDefault();
+      isDraggingRef.current = true;
+      canvas.style.cursor = "grabbing";
+      lastMousePosRef.current = { x: e.clientX, y: e.clientY };
+      mouseDownInfoRef.current = {
+        x: e.clientX,
+        y: e.clientY,
+        time: Date.now(),
+      };
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      e.preventDefault();
+
+      const deltaX = e.clientX - lastMousePosRef.current.x;
+      const deltaY = e.clientY - lastMousePosRef.current.y;
+
+      if (e.ctrlKey) {
+        // Zoom
+        const zoomFactor = 1 + deltaX * 0.005;
+        const newScale = editor.view.scale.x * zoomFactor;
+        if (newScale > 0.05 && newScale < 100) {
+          editor.view.scale.x = editor.view.scale.y = newScale;
+        }
+      } else {
+        // Pan
+        editor.view.translation.x += deltaX;
+        editor.view.translation.y += deltaY;
+      }
+
+      lastMousePosRef.current = { x: e.clientX, y: e.clientY };
+      draw();
+    };
+
+    const handleMouseUp = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      isDraggingRef.current = false;
+      canvas.style.cursor = "grab";
+
+      const downInfo = mouseDownInfoRef.current;
+      if (downInfo) {
+        const travelDist = Math.sqrt(
+          Math.pow(e.clientX - downInfo.x, 2) +
+            Math.pow(e.clientY - downInfo.y, 2),
+        );
+        const timeDiff = Date.now() - downInfo.time;
+        if (timeDiff < 200 && travelDist < 5) {
+          handleImageClick(e);
+        }
+      }
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const zoomFactor = 1 - e.deltaY * 0.001;
       const newScale = editor.view.scale.x * zoomFactor;
-
       if (newScale > 0.05 && newScale < 100) {
         editor.view.scale.x = editor.view.scale.y = newScale;
+        draw();
       }
-    } else {
-      editor.view.translation.x += deltaX;
-      editor.view.translation.y += deltaY;
-    }
+    };
 
-    lastMouseX = e.clientX;
-    lastMouseY = e.clientY;
-    requestAnimationFrame(draw); // Request redraw after state change
-  }
-
-  useEffect(() => {
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
-    syncCanvasSize(canvas);
-    ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    setStatus("loading");
-
-    imageInfo.getImage().then((image: Image) => {
-      const imageData = new ImageData(
-        offscreenCanvas.width,
-        offscreenCanvas.height,
-      );
-      imageData.data.set(image.data);
-      oCtx.putImageData(imageData, 0, 0);
-      draw();
-    });
-
+    let resizeTimeout: number;
     const handleResize = () => {
       clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(debouncedRedraw, 100);
+      resizeTimeout = setTimeout(draw, 100);
     };
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("mouseup", handleMouseUp);
-    window.addEventListener("mousemove", handleMouseMove);
+
     canvas.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    canvas.addEventListener("wheel", handleWheel);
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup function to remove all listeners
     return () => {
+      canvas.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      canvas.removeEventListener("wheel", handleWheel);
       window.removeEventListener("resize", handleResize);
+      if (animationFrameIdRef.current) {
+        cancelAnimationFrame(animationFrameIdRef.current);
+      }
     };
-  });
-  let resizeTimeout: ReturnType<typeof setTimeout>;
+  }, [status, editor, imageInfo, draw]);
+
   return (
     <div className="container">
-      <canvas ref={canvasRef} width={imageInfo.width} height={imageInfo.height}>
-        Canvas not supported(This should not happen)
+      <canvas ref={canvasRef} style={{ cursor: "grab" }}>
+        Canvas not supported
       </canvas>
+      {status !== "ready" && (
+        <div className="status-overlay">
+          <p>{status === "loading" ? "Loading Image..." : "Error"}</p>
+        </div>
+      )}
     </div>
   );
 }
+
