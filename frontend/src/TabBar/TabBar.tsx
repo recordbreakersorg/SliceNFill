@@ -22,6 +22,20 @@ export default function TabBar({
       setEditors(editors.concat(newEditors));
     });
   }
+  function openEditor(editor: Editor) {
+    editor.status.addMessage({
+      content: (
+        <>
+          <span style={{ marginLeft: "8px" }}>Loading...</span>
+        </>
+      ),
+      align: "right",
+      messageClass: "loading-indicator",
+      type: "info",
+      duration: 5000, // Auto-removes after 5 seconds
+    });
+    setEditor(editor);
+  }
   return (
     <div className="w3-bar">
       {editors.map((editor) => (
@@ -30,7 +44,7 @@ export default function TabBar({
             "w3-button w3-bar-item" +
             (currentEditor && currentEditor.id == editor.id ? " selected" : "")
           }
-          onClick={() => setEditor(editor)}
+          onClick={() => openEditor(editor)}
         >
           <span className="title">
             {editor.file.split("/").at(-1)?.split("\\").at(-1)}

@@ -1,7 +1,9 @@
 import Color from "./color";
 import { AskOpenImages, GetEditors } from "../../wailsjs/go/backend/App";
-import { editor } from "../../wailsjs/go/models";
-
+import { editor, options } from "../../wailsjs/go/models";
+import { ImageInfo } from "./image";
+import StatusManager from "./status";
+import Ruse from "./ruses";
 type EditorParams = {
   colors: {
     primary: Color[];
@@ -9,32 +11,63 @@ type EditorParams = {
   };
 };
 
+let done = 0;
 export default class Editor {
   id: number;
   file: string;
   params: EditorParams;
   stack: ImageInfo[];
-  stackIndex: number;
+  stackIndex: Ruse<number>;
+  status: StatusManager;
+  view: {
+    scale: {
+      x: number;
+      y: number;
+    };
+    transtation: {
+      x: number;
+      y: number;
+    };
+    rotation: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  };
+
   static async getEditors(): Promise<Editor[]> {
-    return GetEditors().then((editors) => editors.map(Editor.fromGO));
+    return GetEditors().then((editors: editor.EditorInfo[]) =>
+      editors.map((info) => {
+        return Editor.fromInfo(info);
+      }),
+    );
   }
   static async askOpenFiles() {
     return (await AskOpenImages()).map((rawEditor) => {
-      return Editor.fromGO(rawEditor);
+      return Editor.fromInfo(rawEditor);
     });
   }
-  static fromGO(go: editor.Editor) {
+  static fromInfo(go: editor.EditorInfo) {
     return new Editor({
       file: go.File,
       id: go.ID,
       params: {
         colors: {
-          primary: [],
-          secondary: [],
+          primary: (go.Params.Colors.Primary ?? []).map((color: options.RGBA) =>
+            Color.fromCSS(
+              `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a * 255})`,
+            ),
+          ),
+          secondary: (go.Params.Colors.Secondary ?? []).map(
+            (color: options.RGBA) =>
+              Color.fromCSS(
+                `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a * 255})`,
+              ),
+          ),
         },
       },
-      stack: [],
-      stackIndex: 0,
+      stack: go.Stack.map(ImageInfo.fromGO),
+      stackIndex: go.StackIndex,
     });
   }
   constructor({
@@ -50,29 +83,26 @@ export default class Editor {
     stack: ImageInfo[];
     stackIndex: number;
   }) {
+    this.status = new StatusManager();
     this.file = file;
     this.id = id;
     this.params = params;
     this.stack = stack;
-    this.stackIndex = stackIndex;
-  }
-}
-
-export class ImageInfo {
-  id: number;
-  width: number;
-  height: number;
-  constructor({
-    id,
-    width,
-    height,
-  }: {
-    id: number;
-    width: number;
-    height: number;
-  }) {
-    this.id = id;
-    this.width = width;
-    this.height = height;
+    this.stackIndex = new Ruse(stackIndex);
+    this.view = {
+      rotation: {
+        x: 0,
+        y: 0,
+        z: 0,
+      },
+      scale: {
+        x: 1,
+        y: 1,
+      },
+      transtation: {
+        x: 0,
+        y: 0,
+      },
+    };
   }
 }

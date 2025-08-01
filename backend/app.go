@@ -1,9 +1,13 @@
 package backend
 
+// laufey
+
 import (
 	"context"
 	"embed"
+	"fmt"
 	"slicenfill/backend/editor"
+	"slicenfill/backend/img"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -59,7 +63,7 @@ func (app *App) Run() error {
 	})
 }
 
-func (app *App) AskOpenImages() ([]editor.Editor, error) {
+func (app *App) AskOpenImages() ([]editor.EditorInfo, error) {
 	files, err := runtime.OpenMultipleFilesDialog(app.ctx, runtime.OpenDialogOptions{
 		Title: "Open image file(s)",
 		Filters: []runtime.FileFilter{
@@ -80,17 +84,30 @@ func (app *App) AskOpenImages() ([]editor.Editor, error) {
 	if err != nil {
 		return nil, err
 	}
-	var editors []editor.Editor
+	var infos []editor.EditorInfo
 	for _, file := range files {
 		editor, err := editor.CreateEditor(file)
-		editors = append(editors, editor)
+		infos = append(infos, editor.GetInfo())
 		if err != nil {
-			return editors, err
+			return infos, err
 		}
 	}
-	return editors, nil
+	return infos, nil
 }
 
-func (app *App) GetEditors() []editor.Editor {
-	return editor.GetEditors()
+func (app *App) GetEditors() []editor.EditorInfo {
+	return editor.GetEditorsInfos()
+}
+
+func (app *App) GetImageData(id uint64) []uint8 {
+	rawImage, exists := img.GetImage(id)
+	fmt.Println("Getting image data")
+	if exists {
+		data := rawImage.GetData()
+		fmt.Println("Sent data, first btes: ", string(data[:16]))
+		return data
+	} else {
+		fmt.Println("Data does not exist")
+		return nil
+	}
 }

@@ -2,6 +2,7 @@
 package editor
 
 import (
+	"fmt"
 	"slicenfill/backend/img"
 	"sync/atomic"
 
@@ -12,6 +13,14 @@ var (
 	editorIDCounter uint64
 	editors         []Editor
 )
+
+type EditorInfo struct {
+	ID         uint64
+	File       string
+	Stack      []img.ImageInfo
+	StackIndex uint
+	Params     EditorParams
+}
 
 type EditorParamsColors struct {
 	Primary   []options.RGBA
@@ -30,8 +39,30 @@ type Editor struct {
 	Params     EditorParams
 }
 
+func (edit *Editor) GetInfo() EditorInfo {
+	var imageInfo []img.ImageInfo
+	for _, image := range edit.Stack {
+		imageInfo = append(imageInfo, image.GetInfo())
+	}
+	return EditorInfo{
+		ID:         edit.ID,
+		File:       edit.File,
+		Stack:      imageInfo,
+		StackIndex: edit.StackIndex,
+		Params:     edit.Params,
+	}
+}
+
 func GetEditors() []Editor {
 	return editors
+}
+
+func GetEditorsInfos() []EditorInfo {
+	var infos []EditorInfo
+	for _, edit := range editors {
+		infos = append(infos, edit.GetInfo())
+	}
+	return infos
 }
 
 func CreateEditor(path string) (Editor, error) {
@@ -45,6 +76,7 @@ func CreateEditor(path string) (Editor, error) {
 		Stack:      []img.Image{image},
 		StackIndex: 0,
 	}
+	fmt.Println("EDitor created", edit)
 	editors = append(editors, edit)
 	return edit, nil
 }

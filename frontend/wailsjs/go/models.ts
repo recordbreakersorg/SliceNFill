@@ -62,22 +62,22 @@ export namespace editor {
 		    return a;
 		}
 	}
-	export class Editor {
+	export class EditorInfo {
 	    ID: number;
 	    File: string;
-	    Stack: img.Image[];
+	    Stack: img.ImageInfo[];
 	    StackIndex: number;
 	    Params: EditorParams;
 	
 	    static createFrom(source: any = {}) {
-	        return new Editor(source);
+	        return new EditorInfo(source);
 	    }
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.ID = source["ID"];
 	        this.File = source["File"];
-	        this.Stack = this.convertValues(source["Stack"], img.Image);
+	        this.Stack = this.convertValues(source["Stack"], img.ImageInfo);
 	        this.StackIndex = source["StackIndex"];
 	        this.Params = this.convertValues(source["Params"], EditorParams);
 	    }
@@ -126,21 +126,19 @@ export namespace img {
 	        this.CanWrite = source["CanWrite"];
 	    }
 	}
-	export class Image {
+	export class ImageInfo {
 	    ID: number;
-	    Raw: any;
 	    Width: number;
 	    Height: number;
 	    Format: ImageFormat;
 	
 	    static createFrom(source: any = {}) {
-	        return new Image(source);
+	        return new ImageInfo(source);
 	    }
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.ID = source["ID"];
-	        this.Raw = source["Raw"];
 	        this.Width = source["Width"];
 	        this.Height = source["Height"];
 	        this.Format = this.convertValues(source["Format"], ImageFormat);

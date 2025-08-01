@@ -25,7 +25,7 @@ var (
 )
 
 type Image struct {
-	ID     uint
+	ID     uint64
 	Raw    image.Image
 	Width  uint
 	Height uint
@@ -33,7 +33,7 @@ type Image struct {
 }
 
 type ImageInfo struct {
-	ID     uint
+	ID     uint64
 	Width  uint
 	Height uint
 	Format ImageFormat
@@ -85,7 +85,7 @@ func OpenImageFromReader(reader io.Reader, format ImageFormat) (Image, error) {
 	// Verify format matches (optional warning)
 	expectedFormat := strings.ToLower(format.Name)
 	if detectedFormat != expectedFormat &&
-		!(expectedFormat == "jpeg" && detectedFormat == "jpeg") {
+		(expectedFormat != "jpeg" || detectedFormat != "jpeg") {
 		fmt.Printf("Warning: Expected %s but detected %s\n", expectedFormat, detectedFormat)
 	}
 
@@ -95,7 +95,7 @@ func OpenImageFromReader(reader io.Reader, format ImageFormat) (Image, error) {
 	id := atomic.AddUint64(&imageIDCounter, 1)
 
 	newImage := Image{
-		ID:     uint(id),
+		ID:     id,
 		Raw:    img,
 		Width:  uint(bounds.Dx()),
 		Height: uint(bounds.Dy()),
@@ -150,7 +150,7 @@ func (img *Image) SaveImageToWriter(writer io.Writer, format ImageFormat, qualit
 func (img *Image) Clone() Image {
 	id := atomic.AddUint64(&imageIDCounter, 1)
 	return Image{
-		ID:     uint(id),
+		ID:     id,
 		Raw:    img.Raw,
 		Width:  img.Width,
 		Height: img.Height,
@@ -159,15 +159,32 @@ func (img *Image) Clone() Image {
 }
 
 // GetInfo returns basic information about the image
-func (img *Image) GetInfo() map[string]interface{} {
-	return map[string]interface{}{
-		"id":       img.ID,
-		"width":    img.Width,
-		"height":   img.Height,
-		"format":   img.Format.Name,
-		"mimetype": img.Format.MimeType,
-		"canWrite": img.Format.CanWrite,
+func (img *Image) GetInfo() ImageInfo {
+	return ImageInfo{
+		ID:     img.ID,
+		Width:  img.Width,
+		Height: img.Height,
+		Format: img.Format,
 	}
+}
+
+func (img *Image) GetData() []uint8 {
+	width, height := img.Width, img.Height
+
+	data := make([]uint8, width*height*4)
+	idx := 0
+	for y := range int(height) {
+		for x := range int(width) {
+			pix := img.Raw.At(x, y)
+			r, g, b, a := pix.RGBA()
+			data[idx+0] = uint8(r >> 8)
+			data[idx+1] = uint8(g >> 8)
+			data[idx+2] = uint8(b >> 8)
+			data[idx+3] = uint8(a >> 8)
+			idx += 4
+		}
+	}
+	return data
 }
 
 // Resize resizes the image (placeholder - you'd implement actual resizing logic)
@@ -187,4 +204,13 @@ func (img *Image) ConvertFormat(newFormat ImageFormat) error {
 
 	img.Format = newFormat
 	return nil
+}
+
+func GetImage(id uint64) (Image, bool) {
+	for _, image := range images {
+		if id == image.ID {
+			return image, true
+		}
+	}
+	return Image{}, false
 }

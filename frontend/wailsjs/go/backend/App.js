@@ -10,6 +10,10 @@ export function GetEditors() {
   return window['go']['backend']['App']['GetEditors']();
 }
 
+export function GetImageData(arg1) {
+  return window['go']['backend']['App']['GetImageData'](arg1);
+}
+
 export function Run() {
   return window['go']['backend']['App']['Run']();
 }

@@ -1,0 +1,25 @@
+div.container 
+  margin:
+    top: 1px
+  width: 100%
+  height: 100%
+  display: flex
+  align-items: center
+  justify-content: center
+  background-color: orange//#2d3748
+  overflow: hidden
+  canvas
+    display: flex
+    width: 100%
+    height: 100%
+    background-color: blue//#1a202c
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)
+    /* Checkerboard pattern for transparency */
+    background-image: linear-gradient(45deg, #4a5568 25%, transparent 25%), linear-gradient(-45deg, #4a5568 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #4a5568 75%), linear-gradient(-45deg, transparent 75%, #4a5568 75%)
+    background-size: 20px 20px
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px
+    cursor: grab
+    transition: transform 0.2s ease-out
+    touch-action: none // Prevent default touch actions like pan-zoom on some devices
+  &:active
+    cursor: grabbing

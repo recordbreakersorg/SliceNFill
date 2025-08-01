@@ -1,6 +1,7 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../assets/images/logo.svg";
+import "./Home.sass";
 export default function Home() {
   return (
     <div className="home">
@@ -18,14 +19,16 @@ export default function Home() {
         <p>
           Slice'N'Fill, is a simple to use image edition tool for quickly
           tweaking on images before using in documents(like presentations).
-          <ul>
-            <li>
-              Floodfill and replace image colors(with tolerance for better
-              rendering)
-            </li>
-            <li>Image format conversion with support for multiple formats.</li>
-            <li>Light-weight, easy to use an portable</li>
-          </ul>
+        </p>
+        <ul>
+          <li>
+            Floodfill and replace image colors(with tolerance for better
+            rendering)
+          </li>
+          <li>Image format conversion with support for multiple formats.</li>
+          <li>Light-weight, easy to use an portable</li>
+        </ul>
+        <p>
           You could just get started to use it By clicking on the{" "}
           <FontAwesomeIcon icon={faPlus} /> icon
         </p>
