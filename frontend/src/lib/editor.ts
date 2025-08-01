@@ -19,6 +19,19 @@ export enum EditorMode {
   Replace,
 }
 
+export function modeName(m: EditorMode): string {
+  switch (m) {
+    case EditorMode.Fill:
+      return "fill";
+    case EditorMode.Pick:
+      return "pick";
+    case EditorMode.Normal:
+      return "normal";
+    case EditorMode.Replace:
+      return "replace";
+  }
+}
+
 let done = 0;
 export default class Editor {
   id: number;

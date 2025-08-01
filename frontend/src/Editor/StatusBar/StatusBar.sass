@@ -1,11 +1,24 @@
 @use '../../w3/theme'
 .StatusBar
-  display: flex
-  justify-content: space-between
+  height: 20px
   background-color: theme.$secondary-d3
-  .left-items, .right-items
-    display: flex
-    align-items: center
+  p.mode
+    height: 20px
+    margin: 0 0!important
+    font-size: 15px
+    padding:
+      left: 5px !important
+      right: 5px !important
+      top: 0!important
+      bottom: 0!important
+    &.normal
+      background-color: theme.$primary-d4
+    &.fill
+      background-color: red
+    &.replace
+      background-color: green
+    &.pick
+      background-color: blue
   .info
     background-color: #2196F3
     color: white

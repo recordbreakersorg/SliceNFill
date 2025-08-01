@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useSyncExternalStore,
+} from "react";
 import Color from "../../lib/color";
 import Editor, { EditorMode } from "../../lib/editor";
 import Image, { ImageInfo } from "../../lib/image";
@@ -27,6 +33,10 @@ export default function ImageView({
   imageInfo: ImageInfo;
   editor: Editor;
 }) {
+  const editorMode = useSyncExternalStore(
+    (callback) => editor.mode.subscribe(callback),
+    () => editor.mode.getSnapshot(),
+  );
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const offscreenCanvasRef = useRef<OffscreenCanvas | null>(null);
   const [status, setStatus] = useState<ImageViewState>("initializing");
@@ -165,6 +175,7 @@ export default function ImageView({
     };
 
     const handleMouseDown = (e: MouseEvent) => {
+      if (e.button !== 0) return;
       e.preventDefault();
       isDraggingRef.current = true;
       canvas.style.cursor = "grabbing";
@@ -177,7 +188,7 @@ export default function ImageView({
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!isDraggingRef.current) return;
+      if (!isDraggingRef.current || e.button !== 0) return;
       e.preventDefault();
 
       const deltaX = e.clientX - lastMousePosRef.current.x;
@@ -266,4 +277,3 @@ export default function ImageView({
     </div>
   );
 }
-
