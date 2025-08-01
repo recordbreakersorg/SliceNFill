@@ -18,7 +18,7 @@ import "./ActionBar.sass";
 
 const o = {
   x: 12,
-  y: 12,
+  y: 13,
 };
 
 const clamp = (val: number, min: number, max: number): number =>
