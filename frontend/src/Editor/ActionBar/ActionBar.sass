@@ -1,0 +1,35 @@
+@use '../../w3/theme'
+.action-bar
+  $bsize: 5px
+  $bcolor: theme.$primary-d5
+  width: 40px
+  height: fit-content
+  background-color: rgba(theme.$black, 0.4)
+  border: $bsize $bcolor solid
+  border-left: none !important
+  .w3-button
+    padding: 7px !important 
+  hr
+    margin: 2px
+    margin:
+      left: 0
+      right: 0
+    border: calc($bsize / 2) $bcolor solid
+  span.handle
+    width: 70%   
+    margin: auto
+    margin:
+      top: 5px
+      bottom: 5px
+    height: 3px
+    border-radius: 0px
+    padding: 0
+    background-color: theme.$sage
+    cursor: pointer
+    transition: height 0.1s ease-in-out
+    &:hover
+      background-color:  theme.$primary-l1
+      height: 10px
+    &:active
+      background-color: theme.$primary-l5
+      height: 10px

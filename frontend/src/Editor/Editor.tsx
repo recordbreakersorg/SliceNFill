@@ -3,6 +3,7 @@ import Editor from "../lib/editor";
 import ImageView from "./ImageView/ImageView";
 import StatusBar from "./StatusBar/StatusBar";
 import "./Editor.sass";
+import ActionBar from "./ActionBar/ActionBar";
 
 export default function EditorComponent({ editor }: { editor: Editor }) {
   const imageIdx = useSyncExternalStore(
@@ -12,6 +13,9 @@ export default function EditorComponent({ editor }: { editor: Editor }) {
   const image = editor.stack[imageIdx];
   return (
     <div className="editor-container">
+      <div className="action-bar-container">
+        <ActionBar editor={editor} />
+      </div>
       <div className="view">
         {image ? (
           <ImageView imageInfo={image} editor={editor} />
