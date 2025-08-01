@@ -1,9 +1,14 @@
 .editor-container
   height: 100%
   background-color: orange
-  display: flex
-  flex-direction: column
+  position: relative
   .view
-    flex-grow: 1
+    height: 100%
+    width: 100%
   .status
-    flex-grow: 0
+    position: absolute
+    bottom: 0
+    left: 0
+    width: 100%
+    z-index: 500
+
