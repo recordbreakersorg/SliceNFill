@@ -8,7 +8,7 @@ export default class Ruse<T> {
     this._ruse = initial;
     this.listeners = new Set<Listener>();
   }
-  notify() {
+  async notify() {
     for (const listener of this.listeners) {
       listener();
     }
@@ -21,6 +21,14 @@ export default class Ruse<T> {
   }
   getValue() {
     return this._ruse;
+  }
+  set(val: T) {
+    this._set(val);
+    this.notify();
+  }
+  update(f: (_: T) => T) {
+    this._set(f(this._get()));
+    this.notify();
   }
   subscribe(listener: Listener): () => void {
     this.listeners.add(listener);

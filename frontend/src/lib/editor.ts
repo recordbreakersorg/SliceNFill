@@ -4,12 +4,20 @@ import { editor, options } from "../../wailsjs/go/models";
 import { ImageInfo } from "./image";
 import StatusManager from "./status";
 import Ruse from "./ruses";
-type EditorParams = {
-  colors: {
-    primary: Color[];
-    secondary: Color[];
-  };
+type EditorParamsColors = {
+  primary: Color[];
+  secondary: Color[];
 };
+type EditorParams = {
+  colors: Ruse<EditorParamsColors>;
+};
+
+export enum EditorMode {
+  Normal,
+  Pick,
+  Fill,
+  Replace,
+}
 
 let done = 0;
 export default class Editor {
@@ -18,13 +26,14 @@ export default class Editor {
   params: EditorParams;
   stack: ImageInfo[];
   stackIndex: Ruse<number>;
+  mode: Ruse<EditorMode>;
   status: StatusManager;
   view: {
     scale: {
       x: number;
       y: number;
     };
-    transtation: {
+    translation: {
       x: number;
       y: number;
     };
@@ -52,7 +61,7 @@ export default class Editor {
       file: go.File,
       id: go.ID,
       params: {
-        colors: {
+        colors: new Ruse<EditorParamsColors>({
           primary: (go.Params.Colors.Primary ?? []).map((color: options.RGBA) =>
             Color.fromCSS(
               `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a * 255})`,
@@ -64,7 +73,7 @@ export default class Editor {
                 `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a * 255})`,
               ),
           ),
-        },
+        }),
       },
       stack: go.Stack.map(ImageInfo.fromGO),
       stackIndex: go.StackIndex,
@@ -89,6 +98,7 @@ export default class Editor {
     this.params = params;
     this.stack = stack;
     this.stackIndex = new Ruse(stackIndex);
+    this.mode = new Ruse(EditorMode.Normal);
     this.view = {
       rotation: {
         x: 0,
@@ -99,7 +109,7 @@ export default class Editor {
         x: 1,
         y: 1,
       },
-      transtation: {
+      translation: {
         x: 0,
         y: 0,
       },
