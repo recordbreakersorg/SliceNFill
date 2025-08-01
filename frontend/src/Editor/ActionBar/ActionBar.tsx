@@ -17,14 +17,20 @@ import Editor, { EditorMode } from "../../lib/editor";
 import "./ActionBar.sass";
 
 const o = {
-  x: 12,
-  y: 13,
+  x: 0, //12,
+  y: 0, //13,
 };
 
 const clamp = (val: number, min: number, max: number): number =>
   val < min ? min : val > max ? max : val;
 
-export default function ActionBar({ editor }: { editor: Editor }) {
+export default function ActionBar({
+  editor,
+  getReset,
+}: {
+  editor: Editor;
+  getReset: (_: () => void) => void;
+}) {
   const [position, setPosition] = useState(o);
   const movingRef = useRef(false);
   const lastMousePosRef = useRef({ x: 0, y: 0 });
@@ -78,6 +84,7 @@ export default function ActionBar({ editor }: { editor: Editor }) {
   function restorPositionAnimation() {
     setPosition(o);
   }
+  getReset(restorPositionAnimation);
 
   return (
     <div

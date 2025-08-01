@@ -162,7 +162,7 @@ export default function ImageView({
         })`,
       );
 
-      switch (editor.mode.getValue()) {
+      switch (editor.mode.getSnapshot()) {
         case EditorMode.Pick:
           editor.params.colors.update((colors) => {
             if (e.shiftKey) colors.secondary.push(color);
@@ -263,10 +263,19 @@ export default function ImageView({
       }
     };
   }, [status, editor, imageInfo, draw]);
+  function restoreTranslation() {
+    editor.view.translation.x = 0;
+    editor.view.translation.y = 0;
+    draw();
+  }
 
   return (
     <div className="container">
-      <canvas ref={canvasRef} style={{ cursor: "grab" }}>
+      <canvas
+        ref={canvasRef}
+        style={{ cursor: "grab" }}
+        onDoubleClick={restoreTranslation}
+      >
         Canvas not supported
       </canvas>
       {status !== "ready" && (

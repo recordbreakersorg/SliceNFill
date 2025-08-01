@@ -19,9 +19,7 @@ export default class Ruse<T> {
   protected _get(): T {
     return this._ruse;
   }
-  getValue() {
-    return this._ruse;
-  }
+
   set(val: T) {
     this._set(val);
     this.notify();

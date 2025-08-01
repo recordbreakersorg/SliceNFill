@@ -4,11 +4,11 @@ import { editor, options } from "../../wailsjs/go/models";
 import { ImageInfo } from "./image";
 import StatusManager from "./status";
 import Ruse from "./ruses";
-type EditorParamsColors = {
+export type EditorParamsColors = {
   primary: Color[];
   secondary: Color[];
 };
-type EditorParams = {
+export type EditorParams = {
   colors: Ruse<EditorParamsColors>;
 };
 

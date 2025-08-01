@@ -1,3 +1,5 @@
+@use '../w3/theme'
+
 .editor-container
   height: 100%
   background-color: orange
@@ -5,6 +7,11 @@
   .view
     height: 100%
     width: 100%
+  .toolbar-container
+    height: 50px
+    width: 100%
+    background-color: transparentize($color: theme.$black, $amount: 0.1)
+    position: absolute
   .status
     position: absolute
     bottom: 0
@@ -13,8 +20,10 @@
     z-index: 500
     height: 20px
   .action-bar-container
-    width: 40px
+    background-color: transparentize($color: theme.$primary, $amount: 0.7)
+    width: 45px
+    height: 40px
     position: absolute
-    left: 0
-    top: 0px
+    left: 10px
+    top: 10px
 

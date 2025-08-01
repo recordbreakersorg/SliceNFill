@@ -1,2 +1,32 @@
+@use '../../w3/theme'
+
 .toolbar
   width: 100%
+  height: 100%
+  padding-left: 65px
+  .colors
+    background-color: transparentize($color: theme.$secondary-l4, $amount: 0.5)
+    max-width: 200px
+    overflow-x: scroll
+    height: 100%
+    border-left: 3px theme.$secondary-d4 solid
+    padding-left: 3px
+    & > div
+      display: block
+      padding: 0!important
+      margin: 0!important
+      width: 100%
+      height: 50%
+      position: relative
+      .color-card
+        margin: 0
+        padding: 0
+        &:first-child
+          border-right: 1px white solid
+      input
+        position: absolute
+        top: 3px
+        left: 1px
+        width: 17px
+        height: 17px
+        opacity: 0

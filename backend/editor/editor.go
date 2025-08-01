@@ -75,6 +75,18 @@ func CreateEditor(path string) (Editor, error) {
 		File:       path,
 		Stack:      []img.Image{image},
 		StackIndex: 0,
+		Params: EditorParams{
+			Colors: EditorParamsColors{
+				Primary: []options.RGBA{
+					{R: 0, G: 0, B: 0, A: 1},
+					{R: 10, G: 20, B: 30, A: 1},
+				},
+				Secondary: []options.RGBA{
+					{R: 10, G: 20, B: 30, A: 1},
+					{R: 0, G: 0, B: 0, A: 1},
+				},
+			},
+		},
 	}
 	fmt.Println("EDitor created", edit)
 	editors = append(editors, edit)
