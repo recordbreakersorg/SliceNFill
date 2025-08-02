@@ -1,4 +1,5 @@
 @use '../w3/theme'
+@use 'sass:color'
 
 .editor-container
   height: 100%
@@ -26,4 +27,6 @@
     position: absolute
     left: 10px
     top: 10px
+    &:hover
+      background-color: color.adjust(transparentize($color: theme.$primary, $amount: 0.7), $lightness: 50%)
 

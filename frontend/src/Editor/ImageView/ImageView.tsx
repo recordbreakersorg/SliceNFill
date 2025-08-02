@@ -80,6 +80,22 @@ export default function ImageView({
       ctx.restore();
     });
   }, [editor, imageInfo]);
+  function updateCursor() {
+    const mode = editor.mode.getSnapshot();
+    if (!canvasRef.current) return;
+    switch (mode) {
+      case EditorMode.Normal:
+        canvasRef.current.style.cursor = "grab";
+        break;
+      case EditorMode.Replace:
+      case EditorMode.Fill:
+        canvasRef.current.style.cursor = "crosshair";
+        break;
+      case EditorMode.Pick:
+        canvasRef.current.style.cursor = "copy";
+        break;
+    }
+  }
 
   // Effect for initializing the offscreen canvas and loading the image
   useEffect(() => {
@@ -90,6 +106,10 @@ export default function ImageView({
     );
     offscreenCanvasRef.current = offscreenCanvas;
     const oCtx = offscreenCanvas.getContext("2d");
+
+    editor.mode.subscribe(() => {
+      updateCursor();
+    });
 
     if (!oCtx) {
       setStatus("error");
@@ -164,12 +184,15 @@ export default function ImageView({
 
       switch (editor.mode.getSnapshot()) {
         case EditorMode.Pick:
-          editor.params.colors.update((colors) => {
-            if (e.shiftKey) colors.secondary.push(color);
-            else colors.primary.push(color);
-            return colors;
-          });
+          if (e.shiftKey) editor.setSecondaryColor(color);
+          else editor.setPrimaryColor(color);
           break;
+        case EditorMode.Replace:
+          editor
+            .replaceColor(color, editor.params.colors.getSnapshot().primary[0])
+            .then((nextImg) => {
+              editor.stackIndex.set(nextImg);
+            });
         // ... other editor modes
       }
     };
@@ -214,7 +237,7 @@ export default function ImageView({
     const handleMouseUp = (e: MouseEvent) => {
       if (!isDraggingRef.current) return;
       isDraggingRef.current = false;
-      canvas.style.cursor = "grab";
+      updateCursor();
 
       const downInfo = mouseDownInfoRef.current;
       if (downInfo) {
@@ -245,15 +268,32 @@ export default function ImageView({
       resizeTimeout = setTimeout(draw, 100);
     };
 
+    function handleKey(e: KeyboardEvent) {
+      if (e.shiftKey) {
+      } else {
+        if (e.key === "r") {
+          editor.toggleMode(EditorMode.Replace);
+        } else if (e.key === "p") {
+          editor.toggleMode(EditorMode.Pick);
+        } else if (e.key === "f") {
+          editor.toggleMode(EditorMode.Fill);
+        } else if (e.key == "Escape") {
+          editor.mode.set(EditorMode.Normal);
+        }
+      }
+    }
+
     canvas.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
     canvas.addEventListener("wheel", handleWheel);
     window.addEventListener("resize", handleResize);
+    window.addEventListener("keypress", handleKey);
 
     // Cleanup function to remove all listeners
     return () => {
       canvas.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("keypress", handleKey);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
       canvas.removeEventListener("wheel", handleWheel);

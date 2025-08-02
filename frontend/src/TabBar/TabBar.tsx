@@ -7,11 +7,14 @@ import { useEffect, useState } from "react";
 export default function TabBar({
   currentEditor,
   setEditor,
+  editors,
+  setEditors,
 }: {
   currentEditor: Editor | null;
   setEditor: Function;
+  editors: Editor[];
+  setEditors: (_: Editor[]) => void;
 }) {
-  const [editors, setEditors] = useState<Editor[]>([]);
   useEffect(() => {
     Editor.getEditors().then((editors) => {
       setEditors(editors);
@@ -20,6 +23,7 @@ export default function TabBar({
   function openFiles() {
     Editor.askOpenFiles().then((newEditors) => {
       setEditors(editors.concat(newEditors));
+      if (newEditors.length > 0) setEditor(newEditors.at(-1));
     });
   }
   function openEditor(editor: Editor) {

@@ -128,4 +128,31 @@ export default class Editor {
       },
     };
   }
+  toggleMode(
+    mode: EditorMode,
+    normal: EditorMode = EditorMode.Normal,
+  ): EditorMode {
+    if (this.mode.getSnapshot() === mode) this.mode.set(normal);
+    else this.mode.set(mode);
+    return this.mode.getSnapshot();
+  }
+  setPrimaryColor(col: Color) {
+    this.params.colors.update((colors) => {
+      colors.primary = [col].concat(
+        colors.primary.filter((c) => c.toHexString() != col.toHexString()),
+      );
+      return colors;
+    });
+  }
+  setSecondaryColor(col: Color) {
+    this.params.colors.update((colors) => {
+      colors.secondary = [col].concat(
+        colors.secondary.filter((c) => c.toHexString() != col.toHexString()),
+      );
+      return colors;
+    });
+  }
+  async replaceColor(from: Color, to: Color): Promise<number> {
+    return 0;
+  }
 }

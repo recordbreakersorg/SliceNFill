@@ -2,10 +2,28 @@ import Editor from "../lib/editor";
 import "../w3/util.sass";
 import "./Menu.sass";
 
-export default function Menu({ editor }: { editor: Editor | null }) {
+export default function Menu({
+  editor,
+  setEditor,
+  editors,
+  setEditors,
+}: {
+  editor: Editor | null;
+  setEditor: (_: Editor) => void;
+  editors: Editor[];
+  setEditors: (_: Editor[]) => void;
+}) {
+  function openFiles() {
+    Editor.askOpenFiles().then(function (newEditors) {
+      setEditors(editors.concat(newEditors));
+      if (newEditors.length > 0) setEditor(newEditors.at(-1)!);
+    });
+  }
   return (
     <div className="w3-bar">
-      <button className="w3-button w3-bar-item">Open</button>
+      <button className="w3-button w3-bar-item" onClick={openFiles}>
+        Open
+      </button>
       {editor && (
         <>
           <button className="w3-button w3-bar-item">Close</button>

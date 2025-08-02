@@ -40,7 +40,7 @@ export default function ToolBar({ editor }: { editor: Editor }) {
             value={(colors.primary[0] ?? new Color()).toHexString()}
             onChange={(e) => stackPrimary(Color.fromCSS(e.target.value))}
           />
-          {colors.primary.map((col: Color) => (
+          {colors.primary.slice(0, 10).map((col: Color) => (
             <span className="color-card" onClick={() => stackPrimary(col)}>
               <FontAwesomeIcon icon={faSquare} color={col.toHexString()} />
             </span>
@@ -52,7 +52,7 @@ export default function ToolBar({ editor }: { editor: Editor }) {
             value={(colors.secondary[0] ?? new Color()).toHexString()}
             onChange={(e) => stackSecondary(Color.fromCSS(e.target.value))}
           />
-          {colors.secondary.map((col: Color) => (
+          {colors.secondary.slice(0, 10).map((col: Color) => (
             <span className="color-card" onClick={() => stackSecondary(col)}>
               <FontAwesomeIcon icon={faSquare} color={col.toHexString()} />
             </span>

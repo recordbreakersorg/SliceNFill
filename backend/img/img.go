@@ -14,9 +14,10 @@ import (
 
 	_ "github.com/srwiley/oksvg"   // svg
 	_ "github.com/srwiley/rasterx" // svg
-	_ "golang.org/x/image/bmp"     // bmp
-	_ "golang.org/x/image/tiff"    // tiff
-	_ "golang.org/x/image/webp"    // webp
+	"github.com/wailsapp/wails/v2/pkg/options"
+	_ "golang.org/x/image/bmp"  // bmp
+	_ "golang.org/x/image/tiff" // tiff
+	_ "golang.org/x/image/webp" // webp
 )
 
 var (
@@ -149,13 +150,15 @@ func (img *Image) SaveImageToWriter(writer io.Writer, format ImageFormat, qualit
 // Clone creates a copy of the image with a new ID
 func (img *Image) Clone() Image {
 	id := atomic.AddUint64(&imageIDCounter, 1)
-	return Image{
+	newImage := Image{
 		ID:     id,
 		Raw:    img.Raw,
 		Width:  img.Width,
 		Height: img.Height,
 		Format: img.Format,
 	}
+	images = append(images, newImage)
+	return newImage
 }
 
 // GetInfo returns basic information about the image
@@ -213,4 +216,16 @@ func GetImage(id uint64) (Image, bool) {
 		}
 	}
 	return Image{}, false
+}
+
+func (img *Image) ReplaceColor(from options.RGBA, to options.RGBA) {
+	for x := range int(img.Width) {
+		for y := range int(img.Height) {
+			pix := img.Raw.At(x, y)
+			r, g, b, a := pix.RGBA()
+			if r == uint32(from.R) && g == uint32(from.G) && b == uint32(from.B) && a == uint32(from.A) {
+				img.Raw.Set() ... set the data;
+			}
+		}
+	}
 }
