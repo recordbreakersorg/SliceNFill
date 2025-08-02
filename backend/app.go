@@ -114,25 +114,25 @@ func (app *App) GetImageData(id uint64) []uint8 {
 
 // ReplaceColor clones an image, replaces all pixels of a certain color with
 // another color on the clone, and returns the new image's ID.
-func (app *App) ReplaceColor(id uint64, from options.RGBA, to options.RGBA) (img.ImageInfo, error) {
+func (app *App) ReplaceColor(id uint64, from options.RGBA, to options.RGBA, tolerance float64) (img.ImageInfo, error) {
 	image, exists := img.GetImage(id)
 	if !exists {
 		return img.ImageInfo{}, fmt.Errorf("image with ID %d not found", id)
 	}
 	clonedImage := image.Clone()
-	clonedImage.ReplaceColor(from, to)
+	clonedImage.ReplaceColor(from, to, tolerance)
 	return clonedImage.GetInfo(), nil
 }
 
 // FloodFill clones an image, fills an area of continuous color with a new
 // color on the clone, and returns the new image's ID.
-func (app *App) FloodFill(id uint64, x int, y int, to options.RGBA) (img.ImageInfo, error) {
+func (app *App) FloodFill(id uint64, x int, y int, to options.RGBA, tolerance float64) (img.ImageInfo, error) {
 	image, exists := img.GetImage(id)
 	if !exists {
 		return img.ImageInfo{}, fmt.Errorf("image with ID %d not found", id)
 	}
 	clonedImage := image.Clone()
-	clonedImage.FloodFill(x, y, to)
+	clonedImage.FloodFill(x, y, to, tolerance)
 	return clonedImage.GetInfo(), nil
 }
 

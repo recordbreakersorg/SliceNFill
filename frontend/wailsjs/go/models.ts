@@ -34,6 +34,7 @@ export namespace editor {
 	}
 	export class EditorParams {
 	    Colors: EditorParamsColors;
+	    Tolerance: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new EditorParams(source);
@@ -42,6 +43,7 @@ export namespace editor {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Colors = this.convertValues(source["Colors"], EditorParamsColors);
+	        this.Tolerance = source["Tolerance"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

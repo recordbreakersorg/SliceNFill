@@ -28,7 +28,8 @@ type EditorParamsColors struct {
 }
 
 type EditorParams struct {
-	Colors EditorParamsColors
+	Colors    EditorParamsColors
+	Tolerance uint
 }
 
 type Editor struct {
@@ -86,6 +87,7 @@ func CreateEditor(path string) (Editor, error) {
 					{R: 0, G: 0, B: 0, A: 1},
 				},
 			},
+			Tolerance: 1,
 		},
 	}
 	fmt.Println("EDitor created", edit)

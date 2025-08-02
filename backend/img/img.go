@@ -10,6 +10,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"math"
 	"os"
 	"strings"
 	"sync/atomic"
@@ -240,8 +241,25 @@ func GetImage(id uint64) (Image, bool) {
 	return Image{}, false
 }
 
+// colorDistance calculates the Euclidean distance between two colors in RGB space.
+// Alpha channel is ignored.
+func colorDistance(c1, c2 color.Color) float64 {
+	r1, g1, b1, _ := c1.RGBA()
+	r2, g2, b2, _ := c2.RGBA()
+
+	// The values are in the range [0, 0xffff], so we right-shift by 8 to get [0, 0xff]
+	r1_8 := float64(r1 >> 8)
+	g1_8 := float64(g1 >> 8)
+	b1_8 := float64(b1 >> 8)
+	r2_8 := float64(r2 >> 8)
+	g2_8 := float64(g2 >> 8)
+	b2_8 := float64(b2 >> 8)
+
+	return math.Sqrt(math.Pow(r1_8-r2_8, 2) + math.Pow(g1_8-g2_8, 2) + math.Pow(b1_8-b2_8, 2))
+}
+
 // ReplaceColor finds all pixels of a given color and replaces them with another.
-func (img *Image) ReplaceColor(from options.RGBA, to options.RGBA) {
+func (img *Image) ReplaceColor(from options.RGBA, to options.RGBA, tolerance float64) {
 	mutableImg := img.ensureMutable()
 	bounds := mutableImg.Bounds()
 
@@ -251,9 +269,8 @@ func (img *Image) ReplaceColor(from options.RGBA, to options.RGBA) {
 
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
-			// Convert the pixel at (x,y) to the RGBA color model for accurate comparison.
-			// This correctly handles any underlying image type (e.g., NRGBA, YCbCr).
-			if color.RGBAModel.Convert(mutableImg.At(x, y)) == targetColor {
+			pixelColor := mutableImg.At(x, y)
+			if colorDistance(pixelColor, targetColor) <= tolerance {
 				mutableImg.Set(x, y, replacementColor)
 			}
 		}
@@ -261,7 +278,7 @@ func (img *Image) ReplaceColor(from options.RGBA, to options.RGBA) {
 }
 
 // FloodFill fills an area of continuous color with a new color.
-func (img *Image) FloodFill(x, y int, to options.RGBA) {
+func (img *Image) FloodFill(x, y int, to options.RGBA, tolerance float64) {
 	mutableImg := img.ensureMutable()
 	bounds := mutableImg.Bounds()
 
@@ -270,11 +287,11 @@ func (img *Image) FloodFill(x, y int, to options.RGBA) {
 		return
 	}
 
-	targetColor := mutableImg.At(x, y)
+	originalColor := mutableImg.At(x, y)
 	replacementColor := color.RGBA{R: to.R, G: to.G, B: to.B, A: to.A}
 
 	// If the target color is already the replacement color, there's nothing to do.
-	if color.RGBAModel.Convert(targetColor) == replacementColor {
+	if color.RGBAModel.Convert(originalColor) == replacementColor {
 		return
 	}
 
@@ -295,8 +312,8 @@ func (img *Image) FloodFill(x, y int, to options.RGBA) {
 			continue
 		}
 
-		// If the color at the current point matches the target color, replace it
-		if color.RGBAModel.Convert(mutableImg.At(p.X, p.Y)) == color.RGBAModel.Convert(targetColor) {
+		// If the color at the current point is within tolerance of the original color, replace it
+		if colorDistance(mutableImg.At(p.X, p.Y), originalColor) <= tolerance {
 			mutableImg.Set(p.X, p.Y, replacementColor)
 			visited[p] = true
 

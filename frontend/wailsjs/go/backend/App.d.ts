@@ -6,13 +6,13 @@ import {img} from '../models';
 
 export function AskOpenImages():Promise<Array<editor.EditorInfo>>;
 
-export function FloodFill(arg1:number,arg2:number,arg3:number,arg4:options.RGBA):Promise<img.ImageInfo>;
+export function FloodFill(arg1:number,arg2:number,arg3:number,arg4:options.RGBA,arg5:number):Promise<img.ImageInfo>;
 
 export function GetEditors():Promise<Array<editor.EditorInfo>>;
 
 export function GetImageData(arg1:number):Promise<Array<number>>;
 
-export function ReplaceColor(arg1:number,arg2:options.RGBA,arg3:options.RGBA):Promise<img.ImageInfo>;
+export function ReplaceColor(arg1:number,arg2:options.RGBA,arg3:options.RGBA,arg4:number):Promise<img.ImageInfo>;
 
 export function Run():Promise<void>;
 
