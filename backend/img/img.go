@@ -4,6 +4,8 @@ package img
 import (
 	"fmt"
 	"image"
+	"image/color"
+	"image/draw"
 	"image/gif"
 	"image/jpeg"
 	"image/png"
@@ -147,12 +149,32 @@ func (img *Image) SaveImageToWriter(writer io.Writer, format ImageFormat, qualit
 	}
 }
 
-// Clone creates a copy of the image with a new ID
+// ensureMutable checks if the image is a draw.Image, and if not, converts it.
+// This is necessary for any functions that need to modify pixel data.
+func (img *Image) ensureMutable() draw.Image {
+	if mutable, ok := img.Raw.(draw.Image); ok {
+		return mutable
+	}
+
+	bounds := img.Raw.Bounds()
+	mutableImg := image.NewNRGBA(bounds)
+	draw.Draw(mutableImg, bounds, img.Raw, bounds.Min, draw.Src)
+	img.Raw = mutableImg
+	return mutableImg
+}
+
+// Clone creates a deep copy of the image with a new ID.
 func (img *Image) Clone() Image {
 	id := atomic.AddUint64(&imageIDCounter, 1)
+
+	// Create a new backing image and copy the pixels over
+	bounds := img.Raw.Bounds()
+	newRawImg := image.NewNRGBA(bounds)
+	draw.Draw(newRawImg, bounds, img.Raw, bounds.Min, draw.Src)
+
 	newImage := Image{
 		ID:     id,
-		Raw:    img.Raw,
+		Raw:    newRawImg,
 		Width:  img.Width,
 		Height: img.Height,
 		Format: img.Format,
@@ -172,12 +194,12 @@ func (img *Image) GetInfo() ImageInfo {
 }
 
 func (img *Image) GetData() []uint8 {
-	width, height := img.Width, img.Height
-
+	bounds := img.Raw.Bounds()
+	width, height := bounds.Dx(), bounds.Dy()
 	data := make([]uint8, width*height*4)
 	idx := 0
-	for y := range int(height) {
-		for x := range int(width) {
+	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x < bounds.Max.X; x++ {
 			pix := img.Raw.At(x, y)
 			r, g, b, a := pix.RGBA()
 			data[idx+0] = uint8(r >> 8)
@@ -218,13 +240,21 @@ func GetImage(id uint64) (Image, bool) {
 	return Image{}, false
 }
 
+// ReplaceColor finds all pixels of a given color and replaces them with another.
 func (img *Image) ReplaceColor(from options.RGBA, to options.RGBA) {
-	for x := range int(img.Width) {
-		for y := range int(img.Height) {
-			pix := img.Raw.At(x, y)
-			r, g, b, a := pix.RGBA()
-			if r == uint32(from.R) && g == uint32(from.G) && b == uint32(from.B) && a == uint32(from.A) {
-				img.Raw.Set() ... set the data;
+	mutableImg := img.ensureMutable()
+	bounds := mutableImg.Bounds()
+
+	// Convert the input colors to the standard library's color.RGBA type.
+	targetColor := color.RGBA{R: from.R, G: from.G, B: from.B, A: from.A}
+	replacementColor := color.RGBA{R: to.R, G: to.G, B: to.B, A: to.A}
+
+	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x < bounds.Max.X; x++ {
+			// Convert the pixel at (x,y) to the RGBA color model for accurate comparison.
+			// This correctly handles any underlying image type (e.g., NRGBA, YCbCr).
+			if color.RGBAModel.Convert(mutableImg.At(x, y)) == targetColor {
+				mutableImg.Set(x, y, replacementColor)
 			}
 		}
 	}
