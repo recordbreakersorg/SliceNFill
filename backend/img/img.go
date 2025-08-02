@@ -259,3 +259,53 @@ func (img *Image) ReplaceColor(from options.RGBA, to options.RGBA) {
 		}
 	}
 }
+
+// FloodFill fills an area of continuous color with a new color.
+func (img *Image) FloodFill(x, y int, to options.RGBA) {
+	mutableImg := img.ensureMutable()
+	bounds := mutableImg.Bounds()
+
+	// Check if the starting point is within the image bounds
+	if !image.Pt(x, y).In(bounds) {
+		return
+	}
+
+	targetColor := mutableImg.At(x, y)
+	replacementColor := color.RGBA{R: to.R, G: to.G, B: to.B, A: to.A}
+
+	// If the target color is already the replacement color, there's nothing to do.
+	if color.RGBAModel.Convert(targetColor) == replacementColor {
+		return
+	}
+
+	// Queue for the flood fill algorithm
+	queue := make([]image.Point, 0)
+	queue = append(queue, image.Pt(x, y))
+
+	// A map to keep track of visited pixels to avoid reprocessing
+	visited := make(map[image.Point]bool)
+
+	for len(queue) > 0 {
+		// Dequeue the next point
+		p := queue[0]
+		queue = queue[1:]
+
+		// Skip if out of bounds or already visited
+		if !p.In(bounds) || visited[p] {
+			continue
+		}
+
+		// If the color at the current point matches the target color, replace it
+		if color.RGBAModel.Convert(mutableImg.At(p.X, p.Y)) == color.RGBAModel.Convert(targetColor) {
+			mutableImg.Set(p.X, p.Y, replacementColor)
+			visited[p] = true
+
+			// Enqueue neighbors
+			queue = append(queue, image.Pt(p.X+1, p.Y))
+			queue = append(queue, image.Pt(p.X-1, p.Y))
+			queue = append(queue, image.Pt(p.X, p.Y+1))
+			queue = append(queue, image.Pt(p.X, p.Y-1))
+		}
+	}
+}
+
