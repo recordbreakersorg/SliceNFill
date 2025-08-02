@@ -1,9 +1,23 @@
 import { GetImageData } from "../../wailsjs/go/backend/App";
-import { img } from "../../wailsjs/go/models";
+import { img, options } from "../../wailsjs/go/models";
+import Color from "./color";
 
 export default class Image {
   info: ImageInfo;
   data: Uint8Array;
+  static colToRGBA(col: Color): options.RGBA {
+    return new options.RGBA({
+      r: col.red,
+      g: col.green,
+      b: col.blue,
+      a: col.opacity * 255,
+    });
+  }
+  static colFromRGBA(rgba: options.RGBA): Color {
+    return Color.fromCSS(
+      `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a / 255}`,
+    );
+  }
   constructor({ info, data }: { info: ImageInfo; data: Uint8Array }) {
     this.info = info;
     this.data = data;
@@ -24,6 +38,7 @@ export class ImageInfo {
       format: go.Format,
     });
   }
+
   constructor({
     id,
     width,

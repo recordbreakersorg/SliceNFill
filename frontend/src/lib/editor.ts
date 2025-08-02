@@ -1,7 +1,11 @@
 import Color from "./color";
-import { AskOpenImages, GetEditors } from "../../wailsjs/go/backend/App";
+import {
+  AskOpenImages,
+  GetEditors,
+  ReplaceColor,
+} from "../../wailsjs/go/backend/App";
 import { editor, options } from "../../wailsjs/go/models";
-import { ImageInfo } from "./image";
+import Image, { ImageInfo } from "./image";
 import StatusManager from "./status";
 import Ruse from "./ruses";
 export type EditorParamsColors = {
@@ -153,6 +157,10 @@ export default class Editor {
     });
   }
   async replaceColor(from: Color, to: Color): Promise<number> {
-    return 0;
+    return await ReplaceColor(
+      this.stack[this.stackIndex.getSnapshot()].id,
+      Image.colToRGBA(from),
+      Image.colToRGBA(to),
+    );
   }
 }

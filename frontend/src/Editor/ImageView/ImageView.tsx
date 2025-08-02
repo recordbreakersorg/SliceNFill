@@ -26,17 +26,17 @@ type ImageViewState = "initializing" | "loading" | "ready" | "error";
 
 // --- Component ---
 
-export default function ImageView({
-  imageInfo,
-  editor,
-}: {
-  imageInfo: ImageInfo;
-  editor: Editor;
-}) {
+export default function ImageView({ editor }: { editor: Editor }) {
   const editorMode = useSyncExternalStore(
     (callback) => editor.mode.subscribe(callback),
     () => editor.mode.getSnapshot(),
   );
+  const stackIndex = useSyncExternalStore(
+    (callback) => editor.stackIndex.subscribe(callback),
+    () => editor.stackIndex.getSnapshot(),
+  );
+  const imageInfo = editor.stack[stackIndex];
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const offscreenCanvasRef = useRef<OffscreenCanvas | null>(null);
   const [status, setStatus] = useState<ImageViewState>("initializing");
@@ -138,6 +138,7 @@ export default function ImageView({
 
   // Effect for setting up all event listeners
   useEffect(() => {
+    if (!imageInfo) return;
     const canvas = canvasRef.current;
     if (!canvas || status !== "ready") return;
 
@@ -188,10 +189,14 @@ export default function ImageView({
           else editor.setPrimaryColor(color);
           break;
         case EditorMode.Replace:
+          console.log("Calling replace from view on", stackIndex);
           editor
             .replaceColor(color, editor.params.colors.getSnapshot().primary[0])
-            .then((nextImg) => {
-              editor.stackIndex.set(nextImg);
+            .then((image: ImageInfo) => {
+              console.log("View got replaced ", image);
+              editor.stack.push(image);
+              editor.stackIndex.set(editor.stack.length - 1);
+              console.log(editor.stack[editor.stackIndex.getSnapshot()]);
             });
         // ... other editor modes
       }
@@ -318,9 +323,15 @@ export default function ImageView({
       >
         Canvas not supported
       </canvas>
-      {status !== "ready" && (
+      {(status !== "ready" || !imageInfo) && (
         <div className="status-overlay">
-          <p>{status === "loading" ? "Loading Image..." : "Error"}</p>
+          <p>
+            {!imageInfo
+              ? "No image loaded"
+              : status === "loading"
+                ? "Loading Image..."
+                : "Error"}
+          </p>
         </div>
       )}
     </div>

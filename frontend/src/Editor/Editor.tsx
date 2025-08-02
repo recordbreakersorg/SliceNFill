@@ -11,7 +11,6 @@ export default function EditorComponent({ editor }: { editor: Editor }) {
     (callback: any) => editor.stackIndex.subscribe(callback),
     () => editor.stackIndex.getSnapshot(),
   );
-  const image = editor.stack[imageIdx];
   let resetpos: null | (() => void) = null;
   return (
     <div className="editor-container">
@@ -25,11 +24,7 @@ export default function EditorComponent({ editor }: { editor: Editor }) {
         <ActionBar editor={editor} getReset={(f) => (resetpos = f)} />
       </div>
       <div className="view">
-        {image ? (
-          <ImageView imageInfo={image} editor={editor} />
-        ) : (
-          <h3>No image loaded</h3>
-        )}
+        <ImageView editor={editor} />
       </div>
 
       <div className="status">
