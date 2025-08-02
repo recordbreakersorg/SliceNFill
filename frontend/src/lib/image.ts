@@ -38,6 +38,14 @@ export class ImageInfo {
       format: go.Format,
     });
   }
+  toGO() {
+    return new img.ImageInfo({
+      ID: this.id,
+      Width: this.width,
+      Height: this.height,
+      Format: this.format,
+    });
+  }
 
   constructor({
     id,

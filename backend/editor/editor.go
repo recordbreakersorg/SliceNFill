@@ -92,3 +92,18 @@ func CreateEditor(path string) (Editor, error) {
 	editors = append(editors, edit)
 	return edit, nil
 }
+
+func SaveEditor(edit Editor) bool {
+	index := -1
+	for idx, ledit := range editors {
+		if edit.ID == ledit.ID {
+			index = idx
+		}
+	}
+	if index >= 0 {
+		editors[index] = edit
+		return true
+	} else {
+		return false
+	}
+}

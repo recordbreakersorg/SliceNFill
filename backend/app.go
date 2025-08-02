@@ -136,3 +136,7 @@ func (app *App) FloodFill(id uint64, x int, y int, to options.RGBA) (img.ImageIn
 	return clonedImage.GetInfo(), nil
 }
 
+func (app *App) SaveEditor(edit editor.Editor) bool {
+	return editor.SaveEditor(edit)
+}
+

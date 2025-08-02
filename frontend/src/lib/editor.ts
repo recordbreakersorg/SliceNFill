@@ -1,8 +1,10 @@
 import Color from "./color";
 import {
   AskOpenImages,
+  FloodFill,
   GetEditors,
   ReplaceColor,
+  SaveEditor,
 } from "../../wailsjs/go/backend/App";
 import { editor, options } from "../../wailsjs/go/models";
 import Image, { ImageInfo } from "./image";
@@ -140,6 +142,27 @@ export default class Editor {
     else this.mode.set(mode);
     return this.mode.getSnapshot();
   }
+  async save() {
+    return await SaveEditor(this.toGO());
+  }
+  toGO() {
+    return new editor.Editor({
+      ID: this.id,
+      File: this.file,
+      Stack: this.stack.map((info) => info.toGO()),
+      StackIndex: this.stackIndex.getSnapshot(),
+      Params: new editor.EditorParams({
+        Colors: new editor.EditorParamsColors({
+          Primary: this.params.colors
+            .getSnapshot()
+            .primary.map((c) => Image.colToRGBA(c)),
+          Secondary: this.params.colors
+            .getSnapshot()
+            .secondary.map((c) => Image.colToRGBA(c)),
+        }),
+      }),
+    });
+  }
   setPrimaryColor(col: Color) {
     this.params.colors.update((colors) => {
       colors.primary = [col].concat(
@@ -156,11 +179,23 @@ export default class Editor {
       return colors;
     });
   }
-  async replaceColor(from: Color, to: Color): Promise<number> {
-    return await ReplaceColor(
-      this.stack[this.stackIndex.getSnapshot()].id,
-      Image.colToRGBA(from),
-      Image.colToRGBA(to),
+  async replaceColor(from: Color, to: Color): Promise<ImageInfo> {
+    return ImageInfo.fromGO(
+      await ReplaceColor(
+        this.stack[this.stackIndex.getSnapshot()].id,
+        Image.colToRGBA(from),
+        Image.colToRGBA(to),
+      ),
+    );
+  }
+  async floodFill(x: number, y: number, to: Color): Promise<ImageInfo> {
+    return ImageInfo.fromGO(
+      await FloodFill(
+        this.stack[this.stackIndex.getSnapshot()].id,
+        x,
+        y,
+        Image.colToRGBA(to),
+      ),
     );
   }
 }

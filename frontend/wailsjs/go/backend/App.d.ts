@@ -15,3 +15,5 @@ export function GetImageData(arg1:number):Promise<Array<number>>;
 export function ReplaceColor(arg1:number,arg2:options.RGBA,arg3:options.RGBA):Promise<img.ImageInfo>;
 
 export function Run():Promise<void>;
+
+export function SaveEditor(arg1:editor.Editor):Promise<boolean>;

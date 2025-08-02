@@ -25,3 +25,7 @@ export function ReplaceColor(arg1, arg2, arg3) {
 export function Run() {
   return window['go']['backend']['App']['Run']();
 }
+
+export function SaveEditor(arg1) {
+  return window['go']['backend']['App']['SaveEditor'](arg1);
+}

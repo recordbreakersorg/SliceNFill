@@ -187,16 +187,31 @@ export default function ImageView({ editor }: { editor: Editor }) {
         case EditorMode.Pick:
           if (e.shiftKey) editor.setSecondaryColor(color);
           else editor.setPrimaryColor(color);
+          editor.save();
           break;
         case EditorMode.Replace:
-          console.log("Calling replace from view on", stackIndex);
           editor
             .replaceColor(color, editor.params.colors.getSnapshot().primary[0])
             .then((image: ImageInfo) => {
-              console.log("View got replaced ", image);
               editor.stack.push(image);
               editor.stackIndex.set(editor.stack.length - 1);
-              console.log(editor.stack[editor.stackIndex.getSnapshot()]);
+              editor.save();
+              draw();
+              setTimeout(draw, 100);
+            });
+        case EditorMode.Fill:
+          editor
+            .floodFill(
+              offscreenX,
+              offscreenY,
+              editor.params.colors.getSnapshot().primary[0],
+            )
+            .then((image: ImageInfo) => {
+              editor.stack.push(image);
+              editor.stackIndex.set(editor.stack.length - 1);
+              editor.save();
+              draw();
+              setTimeout(draw, 100);
             });
         // ... other editor modes
       }
