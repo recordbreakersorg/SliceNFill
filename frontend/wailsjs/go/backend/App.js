@@ -6,12 +6,20 @@ export function AskOpenImages() {
   return window['go']['backend']['App']['AskOpenImages']();
 }
 
+export function FloodFill(arg1, arg2, arg3, arg4) {
+  return window['go']['backend']['App']['FloodFill'](arg1, arg2, arg3, arg4);
+}
+
 export function GetEditors() {
   return window['go']['backend']['App']['GetEditors']();
 }
 
 export function GetImageData(arg1) {
   return window['go']['backend']['App']['GetImageData'](arg1);
+}
+
+export function ReplaceColor(arg1, arg2, arg3) {
+  return window['go']['backend']['App']['ReplaceColor'](arg1, arg2, arg3);
 }
 
 export function Run() {
