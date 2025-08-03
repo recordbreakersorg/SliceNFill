@@ -65,21 +65,8 @@ func (app *App) Run() error {
 
 func (app *App) AskOpenImages() ([]editor.EditorInfo, error) {
 	files, err := runtime.OpenMultipleFilesDialog(app.ctx, runtime.OpenDialogOptions{
-		Title: "Open image file(s)",
-		Filters: []runtime.FileFilter{
-			{
-				DisplayName: "Portable network graphics file",
-				Pattern:     "*.png",
-			},
-			{
-				DisplayName: "Bitmap Image",
-				Pattern:     "*.bmp",
-			},
-			{
-				DisplayName: "Scalabe Vector Graphics",
-				Pattern:     "*.svg",
-			},
-		},
+		Title:   "Open image file(s)",
+		Filters: img.GetReadImageFileFilters(),
 	})
 	if err != nil {
 		return nil, err

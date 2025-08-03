@@ -21,6 +21,7 @@ import (
 	_ "github.com/srwiley/oksvg"   // svg
 	_ "github.com/srwiley/rasterx" // svg
 	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 	_ "golang.org/x/image/bmp"  // bmp
 	_ "golang.org/x/image/tiff" // tiff
 	_ "golang.org/x/image/webp" // webp
@@ -337,4 +338,17 @@ func (img *Image) ToBase64PNG() (string, error) {
 		return "", err
 	}
 	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
+}
+
+func GetReadImageFileFilters() []runtime.FileFilter {
+	var filters []runtime.FileFilter
+	for _, format := range FORMATS {
+		if format.CanRead {
+			filters = append(filters, runtime.FileFilter{
+				DisplayName: format.Name,
+				Pattern:     "*" + format.Extension,
+			})
+		}
+	}
+	return filters
 }

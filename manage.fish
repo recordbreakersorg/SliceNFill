@@ -11,6 +11,9 @@ end
 function build-nsis
     wails build -nsis -platform windows -v 2 -tags webkit2_41
 end
+function build-linux
+    wails build -v 2 -tags webkit2_41
+end
 
 function help
     echo "manage.fish to easily run commands"
@@ -26,12 +29,13 @@ function cmd -a name
     end
 end
 
-if test "$argv[1]" = ""
-    echo "Run ./manage.fish help for usage"
-else if test "$argv[1]" = build-windows
-    build-windows
-else if test "$argv[1]" = build-nsis
-    build-nsis
-else
-    cmd "$argv[1]"
+switch "$argv[1]"
+    case build-windows
+        build-windows
+    case package-windows
+        build-nsis
+    case build-linux
+        build-linux
+    case ""
+        echo "Run ./manage.fish help for usage"
 end
