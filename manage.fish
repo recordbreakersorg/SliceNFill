@@ -44,6 +44,8 @@ switch "$argv[1]"
         package-linux
     case all
         build-linux && ./manage.fish package-linux && ./manage.fish build-windows && ./manage.fish package-windows
+    case dev
+        dev
     case ""
         echo "Run ./manage.fish help for usage"
 end
