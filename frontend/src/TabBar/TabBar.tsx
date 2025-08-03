@@ -40,6 +40,14 @@ export default function TabBar({
     });
     setEditor(editor);
   }
+  function closeTab(editor: Editor) {
+    editor.destroy().then(() => {
+      if (currentEditor && currentEditor.id == editor.id) {
+        setEditor(null);
+      }
+      setEditors(editors.filter((e) => e.id !== editor.id));
+    });
+  }
   return (
     <div className="w3-bar">
       {editors.map((editor) => (
@@ -53,7 +61,7 @@ export default function TabBar({
           <span className="title">
             {editor.file.split("/").at(-1)?.split("\\").at(-1)}
           </span>
-          <span className="close">
+          <span className="close" onClick={() => closeTab(editor)}>
             <FontAwesomeIcon icon={faClose} size="lg" className="w3-theme-d5" />
           </span>
         </button>

@@ -191,3 +191,7 @@ func (app *App) GetImageThumbnail(id uint64) (string, error) {
 	}
 	return image.ToBase64PNG()
 }
+
+func (app *App) DeleteEditor(id uint64) bool {
+	return editor.DeleteEditor(id)
+}
