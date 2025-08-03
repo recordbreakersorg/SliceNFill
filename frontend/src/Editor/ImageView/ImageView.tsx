@@ -190,29 +190,21 @@ export default function ImageView({ editor }: { editor: Editor }) {
           editor.save();
           break;
         case EditorMode.Replace:
-          editor
-            .replaceColor(color, editor.params.colors.getSnapshot().primary[0])
-            .then((image: ImageInfo) => {
-              editor.stack.push(image);
-              editor.stackIndex.set(editor.stack.length - 1);
-              editor.save();
-              draw();
-              setTimeout(draw, 100);
-            });
+          editor.replaceColor(color).then((image: ImageInfo) => {
+            editor.stack.push(image);
+            editor.stackIndex.set(editor.stack.length - 1);
+            editor.save();
+            draw();
+            setTimeout(draw, 100);
+          });
         case EditorMode.Fill:
-          editor
-            .floodFill(
-              offscreenX,
-              offscreenY,
-              editor.params.colors.getSnapshot().primary[0],
-            )
-            .then((image: ImageInfo) => {
-              editor.stack.push(image);
-              editor.stackIndex.set(editor.stack.length - 1);
-              editor.save();
-              draw();
-              setTimeout(draw, 100);
-            });
+          editor.floodFill(offscreenX, offscreenY).then((image: ImageInfo) => {
+            editor.stack.push(image);
+            editor.stackIndex.set(editor.stack.length - 1);
+            editor.save();
+            draw();
+            setTimeout(draw, 100);
+          });
         // ... other editor modes
       }
     };

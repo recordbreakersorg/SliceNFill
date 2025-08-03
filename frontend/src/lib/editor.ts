@@ -16,6 +16,7 @@ export type EditorParamsColors = {
 };
 export type EditorParams = {
   colors: Ruse<EditorParamsColors>;
+  tolerance: Ruse<number>;
 };
 
 export enum EditorMode {
@@ -37,8 +38,6 @@ export function modeName(m: EditorMode): string {
       return "replace";
   }
 }
-
-let done = 0;
 export default class Editor {
   id: number;
   file: string;
@@ -80,6 +79,7 @@ export default class Editor {
       file: go.File,
       id: go.ID,
       params: {
+        tolerance: new Ruse<number>(go.Params.Tolerance),
         colors: new Ruse<EditorParamsColors>({
           primary: (go.Params.Colors.Primary ?? []).map((color: options.RGBA) =>
             Color.fromCSS(
@@ -160,6 +160,7 @@ export default class Editor {
             .getSnapshot()
             .secondary.map((c) => Image.colToRGBA(c)),
         }),
+        Tolerance: this.params.tolerance.getSnapshot(),
       }),
     });
   }
@@ -179,22 +180,24 @@ export default class Editor {
       return colors;
     });
   }
-  async replaceColor(from: Color, to: Color): Promise<ImageInfo> {
+  async replaceColor(from: Color): Promise<ImageInfo> {
     return ImageInfo.fromGO(
       await ReplaceColor(
         this.stack[this.stackIndex.getSnapshot()].id,
         Image.colToRGBA(from),
-        Image.colToRGBA(to),
+        Image.colToRGBA(this.params.colors.getSnapshot().primary[0]),
+        this.params.tolerance.getSnapshot(),
       ),
     );
   }
-  async floodFill(x: number, y: number, to: Color): Promise<ImageInfo> {
+  async floodFill(x: number, y: number): Promise<ImageInfo> {
     return ImageInfo.fromGO(
       await FloodFill(
         this.stack[this.stackIndex.getSnapshot()].id,
         x,
         y,
-        Image.colToRGBA(to),
+        Image.colToRGBA(this.params.colors.getSnapshot().primary[0]),
+        this.params.tolerance.getSnapshot(),
       ),
     );
   }

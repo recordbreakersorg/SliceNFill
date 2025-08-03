@@ -13,6 +13,10 @@ export default function ToolBar({ editor }: { editor: Editor }) {
     (callback: any) => editor.params.colors.subscribe(callback),
     () => editor.params.colors.getSnapshot(),
   );
+  const editorTolerance: number = useSyncExternalStore(
+    (callback: any) => editor.params.tolerance.subscribe(callback),
+    () => editor.params.tolerance.getSnapshot(),
+  );
   const stackPrimary = (col: Color) => {
     editor.params.colors.update((colors) => {
       console.log("stacking primary", col);
@@ -58,6 +62,16 @@ export default function ToolBar({ editor }: { editor: Editor }) {
             </span>
           ))}
         </div>
+      </div>
+      <div className="tolerance">
+        <label>Tolerance: {editorTolerance}</label>
+        <input
+          type="range"
+          onChange={(e) => editor.params.tolerance.set(Number(e.target.value))}
+          min="0"
+          max="255"
+          value={editorTolerance}
+        />
       </div>
     </div>
   );
