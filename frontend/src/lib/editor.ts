@@ -1,12 +1,13 @@
 import Color from "./color";
 import {
   AskOpenImages,
+  ExportImage,
   FloodFill,
   GetEditors,
   ReplaceColor,
   SaveEditor,
 } from "../../wailsjs/go/backend/App";
-import { editor, options } from "../../wailsjs/go/models";
+import { editor, img, options } from "../../wailsjs/go/models";
 import Image, { ImageInfo } from "./image";
 import StatusManager from "./status";
 import Ruse from "./ruses";
@@ -199,6 +200,12 @@ export default class Editor {
         Image.colToRGBA(this.params.colors.getSnapshot().primary[0]),
         this.params.tolerance.getSnapshot(),
       ),
+    );
+  }
+  async exportAs(format: img.ImageFormat) {
+    return await ExportImage(
+      this.stack[this.stackIndex.getSnapshot()].toGO(),
+      format,
     );
   }
 }

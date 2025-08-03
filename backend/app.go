@@ -140,3 +140,27 @@ func (app *App) SaveEditor(edit editor.Editor) bool {
 	return editor.SaveEditor(edit)
 }
 
+func (app *App) GetImageFormats() []img.ImageFormat {
+	return img.FORMATS
+}
+
+func (app *App) ExportImage(imageInfo img.ImageInfo, format img.ImageFormat) error {
+	image, exists := imageInfo.GetImage()
+	if !exists {
+		return fmt.Errorf("image does not exist")
+	}
+	savePath, err := runtime.SaveFileDialog(app.ctx, runtime.SaveDialogOptions{
+		Title: "Export image as " + format.Name,
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: format.Name + " (" + format.MimeType + ")",
+				Pattern:     "*" + format.Extension,
+			},
+		},
+	})
+	if err != nil {
+		return err
+	}
+	image.SaveImage(savePath, format, 60)
+	return nil
+}

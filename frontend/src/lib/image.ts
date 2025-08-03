@@ -1,4 +1,4 @@
-import { GetImageData } from "../../wailsjs/go/backend/App";
+import { GetImageData, GetImageFormats } from "../../wailsjs/go/backend/App";
 import { img, options } from "../../wailsjs/go/models";
 import Color from "./color";
 
@@ -17,6 +17,9 @@ export default class Image {
     return Color.fromCSS(
       `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a / 255}`,
     );
+  }
+  static async getFormats() {
+    return await GetImageFormats();
   }
   constructor({ info, data }: { info: ImageInfo; data: Uint8Array }) {
     this.info = info;
