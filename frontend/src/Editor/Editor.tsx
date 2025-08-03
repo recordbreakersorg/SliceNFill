@@ -5,6 +5,7 @@ import StatusBar from "./StatusBar/StatusBar";
 import "./Editor.sass";
 import ActionBar from "./ActionBar/ActionBar";
 import ToolBar from "./ToolBar/ToolBar";
+import ChangesBar from "./ChangesBar/ChangesBar";
 
 export default function EditorComponent({ editor }: { editor: Editor }) {
   const imageIdx = useSyncExternalStore(
@@ -29,6 +30,9 @@ export default function EditorComponent({ editor }: { editor: Editor }) {
 
       <div className="status">
         <StatusBar editor={editor} />
+      </div>
+      <div className="changes-bar-container">
+        <ChangesBar editor={editor} />
       </div>
     </div>
   );

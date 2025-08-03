@@ -208,4 +208,14 @@ export default class Editor {
       format,
     );
   }
+  undo() {
+    if (this.stackIndex.getSnapshot() > 0) {
+      this.stackIndex.update((i) => i - 1);
+    }
+  }
+  redo() {
+    if (this.stackIndex.getSnapshot() < this.stack.length - 1) {
+      this.stackIndex.update((i) => i + 1);
+    }
+  }
 }
