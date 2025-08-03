@@ -1,31 +1,78 @@
 .changes-bar
   display: flex
   flex-direction: column
-  gap: 5px
-  padding: 5px
-  background-color: #333
-  color: white
+  gap: 8px
+  padding: 8px
+  background-color: #2a2a2a
+  color: #e0e0e0
   height: 100%
+
   .do-buttons
     display: flex
-    gap: 5px
+    gap: 8px
+    flex-shrink: 0
+
     button
       flex-grow: 1
+      display: flex
+      justify-content: center
+      align-items: center
+      background-color: #3c3c3c
+      color: #e0e0e0
+      border: 1px solid #555
+      padding: 8px
+      cursor: pointer
+      transition: background-color 0.2s ease, border-color 0.2s ease
+
+      .svg-inline--fa
+        font-size: 1.2em
+
+      &:hover
+        background-color: #4a4a4a
+        border-color: #777
+
+      &:active
+        background-color: #5a5a5a
+
+      &:disabled
+        opacity: 0.5
+        cursor: not-allowed
+        background-color: #3c3c3c
+        border-color: #555
+
   .changes
+    flex-grow: 1
     display: flex
     flex-direction: column
-    gap: 5px
+    gap: 8px
     overflow-y: auto
+    padding-right: 4px
+
+    &::-webkit-scrollbar
+      width: 6px
+    &::-webkit-scrollbar-track
+      background: #2a2a2a
+    &::-webkit-scrollbar-thumb
+      background-color: #555
+      border: 1px solid #2a2a2a
+
     .stack-button
+      flex-shrink: 0
       padding: 2px
-      border: 1px solid #555
-      background-color: #444
+      border: 2px solid transparent
+      background-color: #3c3c3c
+      cursor: pointer
+      transition: border-color 0.2s ease, box-shadow 0.2s ease
+
       &:hover
-        background-color: #555
+        border-color: #777
+
       &.selected
-        border-color: #fff
-        background-color: #666
+        border-color: #007bff
+        box-shadow: 0 0 8px -2px #007bff
+
       img
         width: 100%
         height: auto
-        object-fit: contain
+        object-fit: cover
+        display: block

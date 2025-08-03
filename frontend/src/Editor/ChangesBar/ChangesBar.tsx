@@ -22,7 +22,7 @@ function ChangeThumbnail({
 
   return (
     <button
-      className={"w3-button stack-button" + (isSelected ? " selected" : "")}
+      className={"stack-button" + (isSelected ? " selected" : "")}
       onClick={onClick}
     >
       <img src={thumbnail} alt={`Change ${change.id}`} />
@@ -35,15 +35,26 @@ export default function ChangesBar({ editor }: { editor: Editor }) {
     (callback: any) => editor.stackIndex.subscribe(callback),
     () => editor.stackIndex.getSnapshot(),
   );
+
   const reversedStack = [...editor.stack].reverse();
+  const canUndo = stackIndex > 0;
+  const canRedo = stackIndex < editor.stack.length - 1;
 
   return (
     <div className="changes-bar">
       <div className="do-buttons">
-        <button className="w3-button" onClick={() => editor.undo()}>
+        <button
+          className="w3-button"
+          onClick={() => editor.undo()}
+          disabled={!canUndo}
+        >
           <FontAwesomeIcon icon={faUndo} />
         </button>
-        <button className="w3-button" onClick={() => editor.redo()}>
+        <button
+          className="w3-button"
+          onClick={() => editor.redo()}
+          disabled={!canRedo}
+        >
           <FontAwesomeIcon icon={faRedo} />
         </button>
       </div>
