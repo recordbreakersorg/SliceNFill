@@ -210,7 +210,10 @@ export default class Editor {
   }
   undo() {
     if (this.stackIndex.getSnapshot() > 0) {
+      console.log("undo");
       this.stackIndex.update((i) => i - 1);
+    } else {
+      console.log("skip undo");
     }
   }
   redo() {
