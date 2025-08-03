@@ -40,6 +40,8 @@ export default function ImageView({ editor }: { editor: Editor }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const offscreenCanvasRef = useRef<OffscreenCanvas | null>(null);
   const [status, setStatus] = useState<ImageViewState>("initializing");
+  // This state variable is used to trigger a re-render when the view changes.
+  const [viewVersion, setViewVersion] = useState(0);
 
   // Refs for interaction state to avoid re-renders on every change
   const isDraggingRef = useRef(false);
@@ -70,13 +72,24 @@ export default function ImageView({ editor }: { editor: Editor }) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.save();
 
-      const { scale, translation } = editor.view;
-      const centeredX = canvas.width / 2 - (imageInfo.width * scale.x) / 2;
-      const centeredY = canvas.height / 2 - (imageInfo.height * scale.y) / 2;
+      const { scale, translation, rotation } = editor.view;
 
-      ctx.translate(centeredX + translation.x, centeredY + translation.y);
+      // 1. Translate to the center of the canvas and apply user panning
+      ctx.translate(
+        canvas.width / 2 + translation.x,
+        canvas.height / 2 + translation.y,
+      );
+      // 2. Rotate around the new center
+      ctx.rotate(rotation.z);
+      // 3. Scale from the center
       ctx.scale(scale.x, scale.y);
-      ctx.drawImage(offscreenCanvas, 0, 0);
+      // 4. Draw the image, offsetting by half its size to center it on the origin
+      ctx.drawImage(
+        offscreenCanvas,
+        -imageInfo.width / 2,
+        -imageInfo.height / 2,
+      );
+
       ctx.restore();
     });
   }, [editor, imageInfo]);
@@ -136,6 +149,13 @@ export default function ImageView({ editor }: { editor: Editor }) {
       });
   }, [imageInfo, draw]);
 
+  // This effect re-runs the draw function whenever the view changes
+  useEffect(() => {
+    if (status === "ready") {
+      draw();
+    }
+  }, [viewVersion, status, draw]);
+
   // Effect for setting up all event listeners
   useEffect(() => {
     if (!imageInfo) return;
@@ -147,17 +167,32 @@ export default function ImageView({ editor }: { editor: Editor }) {
       const clickX = e.clientX - rect.left;
       const clickY = e.clientY - rect.top;
 
-      const { scale, translation } = editor.view;
-      const centeredX = canvas.width / 2 - (imageInfo.width * scale.x) / 2;
-      const centeredY = canvas.height / 2 - (imageInfo.height * scale.y) / 2;
+      const { scale, translation, rotation } = editor.view;
 
-      const unpannedX = clickX - (centeredX + translation.x);
-      const unpannedY = clickY - (centeredY + translation.y);
+      // Create a point for the mouse click
+      let p = { x: clickX, y: clickY };
 
-      const offscreenX = Math.round(unpannedX / scale.x);
-      const offscreenY = Math.round(unpannedY / scale.y);
+      // 1. Inverse translate from canvas center and pan
+      p.x -= canvas.width / 2 + translation.x;
+      p.y -= canvas.height / 2 + translation.y;
 
-      return { offscreenX, offscreenY };
+      // 2. Inverse rotate
+      const angle = -rotation.z;
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const rotX = p.x * cos - p.y * sin;
+      const rotY = p.x * sin + p.y * cos;
+      p = { x: rotX, y: rotY };
+
+      // 3. Inverse scale
+      p.x /= scale.x;
+      p.y /= scale.y;
+
+      // 4. Inverse translate from image center to get top-left based coords
+      p.x += imageInfo.width / 2;
+      p.y += imageInfo.height / 2;
+
+      return { offscreenX: Math.round(p.x), offscreenY: Math.round(p.y) };
     };
 
     const handleImageClick = (e: MouseEvent) => {
@@ -193,16 +228,16 @@ export default function ImageView({ editor }: { editor: Editor }) {
           editor.replaceColor(color).then((image: ImageInfo) => {
             editor.addStack(image);
             editor.save();
-            draw();
-            setTimeout(draw, 100);
+            setViewVersion((v) => v + 1);
           });
+          break;
         case EditorMode.Fill:
           editor.floodFill(offscreenX, offscreenY).then((image: ImageInfo) => {
             editor.addStack(image);
             editor.save();
-            draw();
-            setTimeout(draw, 100);
+            setViewVersion((v) => v + 1);
           });
+          break;
         // ... other editor modes
       }
     };
@@ -226,6 +261,7 @@ export default function ImageView({ editor }: { editor: Editor }) {
 
       const deltaX = e.clientX - lastMousePosRef.current.x;
       const deltaY = e.clientY - lastMousePosRef.current.y;
+      let viewChanged = false;
 
       if (e.ctrlKey) {
         // Zoom
@@ -233,18 +269,23 @@ export default function ImageView({ editor }: { editor: Editor }) {
         const newScale = editor.view.scale.x * zoomFactor;
         if (newScale > 0.05 && newScale < 100) {
           editor.view.scale.x = editor.view.scale.y = newScale;
+          viewChanged = true;
         }
+      } else if (e.shiftKey) {
+        editor.view.rotation.z += deltaX * 0.01;
+        viewChanged = true;
       } else {
         // Pan
         editor.view.translation.x += deltaX;
         editor.view.translation.y += deltaY;
+        viewChanged = true;
       }
-      setTimeout(function () {
-        editor.save();
-      }, 10);
-
       lastMousePosRef.current = { x: e.clientX, y: e.clientY };
-      draw();
+
+      if (viewChanged) {
+        setViewVersion((v) => v + 1);
+        editor.save();
+      }
     };
 
     const handleMouseUp = (e: MouseEvent) => {
@@ -271,14 +312,14 @@ export default function ImageView({ editor }: { editor: Editor }) {
       const newScale = editor.view.scale.x * zoomFactor;
       if (newScale > 0.05 && newScale < 100) {
         editor.view.scale.x = editor.view.scale.y = newScale;
-        draw();
+        setViewVersion((v) => v + 1);
       }
     };
 
     let resizeTimeout: number;
     const handleResize = () => {
       clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(draw, 100);
+      resizeTimeout = setTimeout(() => setViewVersion((v) => v + 1), 100);
     };
 
     function handleKey(e: KeyboardEvent) {
