@@ -19,7 +19,7 @@ homepage: "https://slicenfill.rbs.cm"
 license: "MIT"
 contents:
   - src: ../bin/slicenfill
-    dst: /usr/bin/wails-open-file
+    dst: /usr/bin/slicenfill
   - src: ./slicenfill.desktop
     dst: /usr/share/applications/slicenfill.desktop
   - src: ../../logo.svg
