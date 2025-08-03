@@ -9,6 +9,7 @@ import (
 	"os"
 	"slicenfill/backend/editor"
 	"slicenfill/backend/img"
+	"strings"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -39,7 +40,7 @@ func (app *App) startup(ctx context.Context) {
 	if len(os.Args) > 1 {
 		file := os.Args[1]
 		if file != "" {
-			editor.CreateEditor(file)
+			editor.CreateEditor(strings.TrimPrefix(file, "slicenfill://"))
 		}
 	}
 }
@@ -52,7 +53,7 @@ func (app *App) onsecondlaunch(info options.SecondInstanceData) {
 	if len(os.Args) > 0 {
 		file := info.Args[0]
 		if file != "" {
-			editor.CreateEditor(file)
+			editor.CreateEditor(strings.TrimPrefix(file, "slicenfill://"))
 			runtime.WindowReload(app.ctx)
 		}
 	}
