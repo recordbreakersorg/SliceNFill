@@ -29,7 +29,8 @@ function cmd -a name
     end
 end
 function package-linux
-    nfpm pkg --packager deb -f ./build/darwin/nfpm.yaml --target ./build/bin
+    cd build/darwin
+    nfpm pkg --packager deb --target .
 end
 
 switch "$argv[1]"
@@ -42,10 +43,7 @@ switch "$argv[1]"
     case package-linux
         package-linux
     case all
-        build-linux
-        package-linux
-        build-windows
-        build-nsis
+        build-linux && ./manage.fish package-linux && ./manage.fish build-windows && ./manage.fish package-windows
     case ""
         echo "Run ./manage.fish help for usage"
 end

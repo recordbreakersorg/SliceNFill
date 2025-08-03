@@ -11,7 +11,7 @@ provides:
   - slicenfill
 arch: "amd64"
 platform: "linux"
-version: "1.0.0"
+version: "1.0.1"
 section: "default"
 priority: "extra"
 maintainer: "Engon Ken Morel <engon@rbs.cm>"
