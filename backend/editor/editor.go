@@ -109,3 +109,20 @@ func SaveEditor(edit Editor) bool {
 		return false
 	}
 }
+
+func DeleteEditor(id uint64) bool {
+	var newList []Editor
+	found := false
+	for _, ledit := range editors {
+		if id != ledit.ID {
+			newList = append(newList, ledit)
+		} else {
+			found = true
+			for _, image := range ledit.Stack {
+				img.DeleteImage(image.ID)
+			}
+		}
+	}
+	editors = newList
+	return found
+}

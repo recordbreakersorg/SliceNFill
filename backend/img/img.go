@@ -338,3 +338,17 @@ func (img *Image) ToBase64PNG() (string, error) {
 	}
 	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
 }
+
+func DeleteImage(id uint64) bool {
+	var newList []Image
+	found := false
+	for _, limage := range images {
+		if id != limage.ID {
+			newList = append(newList, limage)
+		} else {
+			found = true
+		}
+	}
+	images = newList
+	return found
+}

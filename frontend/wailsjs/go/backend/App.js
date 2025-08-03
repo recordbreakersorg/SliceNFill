@@ -6,6 +6,10 @@ export function AskOpenImages() {
   return window['go']['backend']['App']['AskOpenImages']();
 }
 
+export function DeleteEditor(arg1) {
+  return window['go']['backend']['App']['DeleteEditor'](arg1);
+}
+
 export function ExportImage(arg1, arg2) {
   return window['go']['backend']['App']['ExportImage'](arg1, arg2);
 }

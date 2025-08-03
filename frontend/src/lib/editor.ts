@@ -1,6 +1,7 @@
 import Color from "./color";
 import {
   AskOpenImages,
+  DeleteEditor,
   ExportImage,
   FloodFill,
   GetEditors,
@@ -220,5 +221,8 @@ export default class Editor {
     if (this.stackIndex.getSnapshot() < this.stack.length - 1) {
       this.stackIndex.update((i) => i + 1);
     }
+  }
+  async destroy() {
+    return await DeleteEditor(this.id);
   }
 }
