@@ -75,7 +75,7 @@ export default function ToolBar({ editor }: { editor: Editor }) {
           type="range"
           onChange={(e) => editor.params.tolerance.set(Number(e.target.value))}
           min="0"
-          max={Math.sqrt(255 * 255 * 3)}
+          max={Math.ceil(Math.sqrt(255 * 255 * 3))}
           step="1"
           value={editorTolerance}
         />
