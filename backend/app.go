@@ -95,7 +95,7 @@ func (app *App) Run() error {
 	})
 }
 
-func (app *App) AskOpenImages() ([]editor.EditorInfo, error) {
+func (app *App) AskOpenImages() ([]editor.Editor, error) {
 	files, err := runtime.OpenMultipleFilesDialog(app.ctx, runtime.OpenDialogOptions{
 		Title:   "Open image file(s)",
 		Filters: img.GetReadImageFileFilters(),
@@ -103,19 +103,36 @@ func (app *App) AskOpenImages() ([]editor.EditorInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	var infos []editor.EditorInfo
+	var editors []editor.Editor
 	for _, file := range files {
 		editor, err := editor.CreateEditor(file)
-		infos = append(infos, editor.GetInfo())
 		if err != nil {
-			return infos, err
+			choice, err := runtime.MessageDialog(app.ctx, runtime.MessageDialogOptions{
+				Type:    runtime.ErrorDialog,
+				Title:   "Error",
+				Message: "Error opening file " + file + ": " + err.Error(),
+				Buttons: []string{
+					"Try other operations",
+					"Continue",
+				},
+			})
+			if err != nil {
+				if choice == "Try other operations" {
+					continue
+				} else {
+					break
+				}
+			}
+		}
+		if err == nil {
+			editors = append(editors, editor)
 		}
 	}
-	return infos, nil
+	return editors, nil
 }
 
-func (app *App) GetEditors() []editor.EditorInfo {
-	return editor.GetEditorsInfos()
+func (app *App) GetEditors() []editor.Editor {
+	return editor.GetEditors()
 }
 
 func (app *App) GetImageData(id uint64) []uint8 {

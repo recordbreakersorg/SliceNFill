@@ -24,15 +24,6 @@ type EditorView struct {
 	RotationZ    float64
 }
 
-type EditorInfo struct {
-	ID         uint64
-	File       string
-	Stack      []img.ImageInfo
-	StackIndex uint
-	Params     EditorParams
-	View       EditorView
-}
-
 type EditorParamsColors struct {
 	Primary   []options.RGBA
 	Secondary []options.RGBA
@@ -46,36 +37,14 @@ type EditorParams struct {
 type Editor struct {
 	ID         uint64
 	File       string
-	Stack      []img.Image
+	Stack      []img.ImageInfo
 	StackIndex uint
 	Params     EditorParams
-}
-
-func (edit *Editor) GetInfo() EditorInfo {
-	var imageInfo []img.ImageInfo
-	for _, image := range edit.Stack {
-		imageInfo = append(imageInfo, image.GetInfo())
-	}
-	return EditorInfo{
-		ID:         edit.ID,
-		File:       edit.File,
-		Stack:      imageInfo,
-		StackIndex: edit.StackIndex,
-		Params:     edit.Params,
-		View:       EditorView{},
-	}
+	View       EditorView
 }
 
 func GetEditors() []Editor {
 	return editors
-}
-
-func GetEditorsInfos() []EditorInfo {
-	var infos []EditorInfo
-	for _, edit := range editors {
-		infos = append(infos, edit.GetInfo())
-	}
-	return infos
 }
 
 func CreateEditor(path string) (Editor, error) {
@@ -86,7 +55,7 @@ func CreateEditor(path string) (Editor, error) {
 	edit := Editor{
 		ID:         atomic.AddUint64(&editorIDCounter, 1),
 		File:       path,
-		Stack:      []img.Image{image},
+		Stack:      []img.ImageInfo{image.GetInfo()},
 		StackIndex: 0,
 		Params: EditorParams{
 			Colors: EditorParamsColors{

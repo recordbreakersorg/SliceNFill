@@ -171,6 +171,15 @@ export default class Editor {
         }),
         Tolerance: this.params.tolerance.getSnapshot(),
       }),
+      View: new editor.EditorView({
+        ScaleX: this.view.scale.x,
+        ScaleY: this.view.scale.y,
+        TranslationX: this.view.translation.x,
+        TranslationY: this.view.translation.y,
+        RotationX: this.view.rotation.x,
+        RotationY: this.view.rotation.y,
+        RotationZ: this.view.rotation.z,
+      }),
     });
   }
   setPrimaryColor(col: Color) {
