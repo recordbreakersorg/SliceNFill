@@ -1,3 +1,5 @@
+@use '../../w3/theme'
+
 .changes-bar
   display: flex
   flex-direction: column
@@ -68,8 +70,8 @@
         border-color: #777
 
       &.selected
-        border-color: #007bff
-        box-shadow: 0 0 8px -2px #007bff
+        border-color: theme.$primary
+        box-shadow: 0 0 8px -2px theme.$primary
 
       img
         width: 100%
