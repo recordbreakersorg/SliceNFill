@@ -13,7 +13,7 @@ end
 type StringMap = {
   [key: string]: string;
 };
-type RGBObj = { r: number, g: number, b: number };
+type RGBObj = { r: number; g: number; b: number };
 
 export default class Color {
   red: number;
@@ -57,40 +57,123 @@ export default class Color {
     return "rgb(" + this.red + ", " + this.green + ", " + this.blue + ")";
   }
   toRgbaString() {
-    return "rgba(" + this.red + ", " + this.green + ", " + this.blue + ", " + this.opacity + ")";
+    return (
+      "rgba(" +
+      this.red +
+      ", " +
+      this.green +
+      ", " +
+      this.blue +
+      ", " +
+      this.opacity +
+      ")"
+    );
   }
   toHwbString() {
-    return "hwb(" + this.hue + ", " + Math.round(this.whiteness * 100) + "%, " + Math.round(this.blackness * 100) + "%)";
+    return (
+      "hwb(" +
+      this.hue +
+      ", " +
+      Math.round(this.whiteness * 100) +
+      "%, " +
+      Math.round(this.blackness * 100) +
+      "%)"
+    );
   }
   toHwbStringDecimal() {
-    return "hwb(" + this.hue + ", " + this.whiteness + ", " + this.blackness + ")";
+    return (
+      "hwb(" + this.hue + ", " + this.whiteness + ", " + this.blackness + ")"
+    );
   }
   toHwbaString() {
-    return "hwba(" + this.hue + ", " + Math.round(this.whiteness * 100) + "%, " + Math.round(this.blackness * 100) + "%, " + this.opacity + ")";
+    return (
+      "hwba(" +
+      this.hue +
+      ", " +
+      Math.round(this.whiteness * 100) +
+      "%, " +
+      Math.round(this.blackness * 100) +
+      "%, " +
+      this.opacity +
+      ")"
+    );
   }
   toHslString() {
-    return "hsl(" + this.hue + ", " + Math.round(this.sat * 100) + "%, " + Math.round(this.lightness * 100) + "%)";
+    return (
+      "hsl(" +
+      this.hue +
+      ", " +
+      Math.round(this.sat * 100) +
+      "%, " +
+      Math.round(this.lightness * 100) +
+      "%)"
+    );
   }
   toHslStringDecimal() {
     return "hsl(" + this.hue + ", " + this.sat + ", " + this.lightness + ")";
   }
   toHslaString() {
-    return "hsla(" + this.hue + ", " + Math.round(this.sat * 100) + "%, " + Math.round(this.lightness * 100) + "%, " + this.opacity + ")";
+    return (
+      "hsla(" +
+      this.hue +
+      ", " +
+      Math.round(this.sat * 100) +
+      "%, " +
+      Math.round(this.lightness * 100) +
+      "%, " +
+      this.opacity +
+      ")"
+    );
   }
   toCmykString() {
-    return "cmyk(" + Math.round(this.cyan * 100) + "%, " + Math.round(this.magenta * 100) + "%, " + Math.round(this.yellow * 100) + "%, " + Math.round(this.black * 100) + "%)";
+    return (
+      "cmyk(" +
+      Math.round(this.cyan * 100) +
+      "%, " +
+      Math.round(this.magenta * 100) +
+      "%, " +
+      Math.round(this.yellow * 100) +
+      "%, " +
+      Math.round(this.black * 100) +
+      "%)"
+    );
   }
   toCmykStringDecimal() {
-    return "cmyk(" + this.cyan + ", " + this.magenta + ", " + this.yellow + ", " + this.black + ")";
+    return (
+      "cmyk(" +
+      this.cyan +
+      ", " +
+      this.magenta +
+      ", " +
+      this.yellow +
+      ", " +
+      this.black +
+      ")"
+    );
   }
   toNcolString() {
-    return this.ncol + ", " + Math.round(this.whiteness * 100) + "%, " + Math.round(this.blackness * 100) + "%";
+    return (
+      this.ncol +
+      ", " +
+      Math.round(this.whiteness * 100) +
+      "%, " +
+      Math.round(this.blackness * 100) +
+      "%"
+    );
   }
   toNcolStringDecimal(): string {
     return this.ncol + ", " + this.whiteness + ", " + this.blackness;
   }
   toNcolaString(): string {
-    return this.ncol + ", " + Math.round(this.whiteness * 100) + "%, " + Math.round(this.blackness * 100) + "%, " + this.opacity;
+    return (
+      this.ncol +
+      ", " +
+      Math.round(this.whiteness * 100) +
+      "%, " +
+      Math.round(this.blackness * 100) +
+      "%, " +
+      this.opacity
+    );
   }
   toName(): string {
     var r: number, g: number, b: number, hex: string, name: string;
@@ -118,31 +201,51 @@ export default class Color {
     return { h: this.hue, s: this.sat, l: this.lightness, a: this.opacity };
   }
   toHwb() {
-    return { h: this.hue, w: this.whiteness, b: this.blackness, a: this.opacity };
+    return {
+      h: this.hue,
+      w: this.whiteness,
+      b: this.blackness,
+      a: this.opacity,
+    };
   }
   toCmyk() {
-    return { c: this.cyan, m: this.magenta, y: this.yellow, k: this.black, a: this.opacity };
+    return {
+      c: this.cyan,
+      m: this.magenta,
+      y: this.yellow,
+      k: this.black,
+      a: this.opacity,
+    };
   }
   toNcol() {
-    return { ncol: this.ncol, w: this.whiteness, b: this.blackness, a: this.opacity };
+    return {
+      ncol: this.ncol,
+      w: this.whiteness,
+      b: this.blackness,
+      a: this.opacity,
+    };
   }
   isDark(n: number) {
-    var m = (n || 128);
-    return (((this.red * 299 + this.green * 587 + this.blue * 114) / 1000) < m);
+    var m = n || 128;
+    return (this.red * 299 + this.green * 587 + this.blue * 114) / 1000 < m;
   }
   lighter(n: number): Color {
     var x, rgb, color;
-    x = (n / 100 || 0.1);
+    x = n / 100 || 0.1;
     this.lightness += x;
-    if (this.lightness > 1) { this.lightness = 1; }
+    if (this.lightness > 1) {
+      this.lightness = 1;
+    }
     rgb = Color.hslToRgb(this.hue, this.sat, this.lightness);
     return Color.create(rgb, this.opacity, this.hue, this.sat);
   }
   darker(n: number): Color {
     var x, rgb;
-    x = (n / 100 || 0.1);
+    x = n / 100 || 0.1;
     this.lightness -= x;
-    if (this.lightness < 0) { this.lightness = 0; }
+    if (this.lightness < 0) {
+      this.lightness = 0;
+    }
     rgb = Color.hslToRgb(this.hue, this.sat, this.lightness);
     return Color.create(rgb, this.opacity, this.hue, this.sat);
   }
@@ -163,8 +266,7 @@ export default class Color {
     this.valid = color.valid;
   }
   static fromCSS(c: string): Color {
-    var
-      x: string,
+    var x: string,
       y: string,
       typ: string,
       arr: any[] = [],
@@ -181,10 +283,31 @@ export default class Color {
     x = c.substr(0, 1).toUpperCase();
     y = c.substr(1);
     a = 1;
-    if ((x == "R" || x == "Y" || x == "G" || x == "C" || x == "B" || x == "M" || x == "W") && !isNaN(Number(y))) { c = "ncol(" + c + ")"; }
-    if (c.length != 3 && c.length != 6 && !isNaN(Number(c))) { c = "ncol(" + c + ")"; }
-    if (c.indexOf(",") > 0 && c.indexOf("(") == -1) { c = "ncol(" + c + ")"; }
-    if (c.substr(0, 3) == "rgb" || c.substr(0, 3) == "hsl" || c.substr(0, 3) == "hwb" || c.substr(0, 4) == "ncol" || c.substr(0, 4) == "cmyk") {
+    if (
+      (x == "R" ||
+        x == "Y" ||
+        x == "G" ||
+        x == "C" ||
+        x == "B" ||
+        x == "M" ||
+        x == "W") &&
+      !isNaN(Number(y))
+    ) {
+      c = "ncol(" + c + ")";
+    }
+    if (c.length != 3 && c.length != 6 && !isNaN(Number(c))) {
+      c = "ncol(" + c + ")";
+    }
+    if (c.indexOf(",") > 0 && c.indexOf("(") == -1) {
+      c = "ncol(" + c + ")";
+    }
+    if (
+      c.substr(0, 3) == "rgb" ||
+      c.substr(0, 3) == "hsl" ||
+      c.substr(0, 3) == "hwb" ||
+      c.substr(0, 4) == "ncol" ||
+      c.substr(0, 4) == "cmyk"
+    ) {
       if (c.substr(0, 4) == "ncol") {
         if (c.split(",").length == 4 && c.indexOf("ncola") == -1) {
           c = c.replace("ncol", "ncola");
@@ -219,43 +342,64 @@ export default class Color {
           return Color.empty();
         }
         for (i = 0; i < arrlength; i++) {
-          if (arr[i] == "" || arr[i] == " ") { arr[i] = "0"; }
+          if (arr[i] == "" || arr[i] == " ") {
+            arr[i] = "0";
+          }
           if (arr[i].indexOf("%") > -1) {
             arr[i] = arr[i].replace("%", "");
             arr[i] = Number(parseInt(arr[i]) / 100).toFixed(2);
-            if (i < 3) { arr[i] = Math.round(parseInt(arr[i]) * 255).toFixed(2); }
+            if (i < 3) {
+              arr[i] = Math.round(parseInt(arr[i]) * 255).toFixed(2);
+            }
           }
-          if (isNaN(Number(arr[i]))) { return Color.empty(); }
-          if (parseInt(arr[i]) > 255) { arr[i] = "255"; }
-          if (i < 3) { arr[i] = parseInt(arr[i]).toFixed(2); }
+          if (isNaN(Number(arr[i]))) {
+            return Color.empty();
+          }
+          if (parseInt(arr[i]) > 255) {
+            arr[i] = "255";
+          }
+          if (i < 3) {
+            arr[i] = parseInt(arr[i]).toFixed(2);
+          }
           if (i == 3 && Number(arr[i]) > 1) {
             arr[i] = "1";
           }
           rgb = { r: Number(arr[0]), g: Number(arr[1]), b: Number(arr[2]) };
-          if (opacity == true) { a = Number(arr[3]); }
+          if (opacity == true) {
+            a = Number(arr[3]);
+          }
         }
       }
       if (typ == "hsl" || typ == "hwb" || typ == "ncol") {
-        while (arr.length < arrlength) { arr.push("0"); }
+        while (arr.length < arrlength) {
+          arr.push("0");
+        }
         if (typ == "hsl" || typ == "hwb") {
-          if (parseInt(arr[0]) >= 360) { arr[0] = "0"; }
+          if (parseInt(arr[0]) >= 360) {
+            arr[0] = "0";
+          }
         }
         for (i = 1; i < arrlength; i++) {
           if (arr[i].indexOf("%") > -1) {
             arr[i] = arr[i].replace("%", "");
             arr[i] = Number(arr[i]).toFixed(2);
-            if (isNaN(Number(arr[i]))) { return Color.empty(); }
+            if (isNaN(Number(arr[i]))) {
+              return Color.empty();
+            }
             arr[i] = (parseInt(arr[i]) / 100).toFixed(2);
           }
-          if (Number(arr[i]) > 1) { arr[i] = "1"; }
-          if (Number(arr[i]) < 0) { arr[i] = "0"; }
+          if (Number(arr[i]) > 1) {
+            arr[i] = "1";
+          }
+          if (Number(arr[i]) < 0) {
+            arr[i] = "0";
+          }
         }
         if (typ == "hsl") {
           rgb = Color.hslToRgb(Number(arr[0]), Number(arr[1]), Number(arr[2]));
           hue = Number(arr[0]);
           sat = Number(arr[1]);
-        }
-        else if (typ == "hwb") {
+        } else if (typ == "hwb") {
           rgb = Color.hwbToRgb(Number(arr[0]), Number(arr[1]), Number(arr[2]));
         } else if (typ == "ncol") {
           const val = Color.ncolToRgb(arr[0], Number(arr[1]), Number(arr[2]));
@@ -263,21 +407,38 @@ export default class Color {
             rgb = val;
           }
         }
-        if (opacity == true) { a = Number(arr[3]); }
+        if (opacity == true) {
+          a = Number(arr[3]);
+        }
       }
       if (typ == "cmyk") {
-        while (arr.length < arrlength) { arr.push("0"); }
+        while (arr.length < arrlength) {
+          arr.push("0");
+        }
         for (i = 0; i < arrlength; i++) {
           if (arr[i].indexOf("%") > -1) {
             arr[i] = arr[i].replace("%", "");
-            if (isNaN(Number(arr[i]))) { return Color.empty(); }
+            if (isNaN(Number(arr[i]))) {
+              return Color.empty();
+            }
             arr[i] = (parseInt(arr[i]) / 100).toFixed(2);
           }
-          if (Number(arr[i]) > 1) { arr[i] = "1"; }
-          if (Number(arr[i]) < 0) { arr[i] = "0"; }
+          if (Number(arr[i]) > 1) {
+            arr[i] = "1";
+          }
+          if (Number(arr[i]) < 0) {
+            arr[i] = "0";
+          }
         }
-        rgb = Color.cmykToRgb(Number(arr[0]), Number(arr[1]), Number(arr[2]), Number(arr[3]));
-        if (opacity == true) { a = Number(arr[4]); }
+        rgb = Color.cmykToRgb(
+          Number(arr[0]),
+          Number(arr[1]),
+          Number(arr[2]),
+          Number(arr[3]),
+        );
+        if (opacity == true) {
+          a = Number(arr[4]);
+        }
       }
     } else if (c.substr(0, 3) == "ncs") {
       const val = Color.ncsToRgb(c);
@@ -293,7 +454,7 @@ export default class Color {
           rgb = {
             r: parseInt(colorhex.substr(0, 2), 16),
             g: parseInt(colorhex.substr(2, 2), 16),
-            b: parseInt(colorhex.substr(4, 2), 16)
+            b: parseInt(colorhex.substr(4, 2), 16),
           };
           break;
         }
@@ -301,31 +462,50 @@ export default class Color {
 
       if (match == false) {
         c = c.replace("#", "");
-        if (c.length == 3) { c = c.substr(0, 1) + c.substr(0, 1) + c.substr(1, 1) + c.substr(1, 1) + c.substr(2, 1) + c.substr(2, 1); }
+        if (c.length == 3) {
+          c =
+            c.substr(0, 1) +
+            c.substr(0, 1) +
+            c.substr(1, 1) +
+            c.substr(1, 1) +
+            c.substr(2, 1) +
+            c.substr(2, 1);
+        }
         arr[0] = parseInt(c.substr(0, 2), 16).toFixed(2);
         arr[1] = parseInt(c.substr(2, 2), 16).toFixed(2);
         arr[2] = parseInt(c.substr(4, 2), 16).toFixed(2);
         for (i = 0; i < 3; i++) {
-          if (isNaN(Number(arr[i]))) { return Color.empty(); }
+          if (isNaN(Number(arr[i]))) {
+            return Color.empty();
+          }
         }
         rgb = {
           r: Number(arr[0]),
           g: Number(arr[1]),
-          b: Number(arr[2])
+          b: Number(arr[2]),
         };
       }
     }
     return Color.create(rgb, a, hue, sat);
   }
-  static create(rgb: { r: number, g: number, b: number }, a: number, h: number, s: number): Color {
+  static create(
+    rgb: { r: number; g: number; b: number },
+    a: number,
+    h: number,
+    s: number,
+  ): Color {
     var hsl, hwb, cmyk, ncol, color, hue, sat;
-    if (!rgb) { return Color.empty(); }
-    if (!a) { a = 1; }
+    if (!rgb) {
+      return Color.empty();
+    }
+    if (!a) {
+      a = 1;
+    }
     hsl = Color.rgbToHsl(rgb.r, rgb.g, rgb.b);
     hwb = Color.rgbToHwb(rgb.r, rgb.g, rgb.b);
     cmyk = Color.rgbToCmyk(rgb.r, rgb.g, rgb.b);
-    hue = (h || hsl.h);
-    sat = (s || hsl.s);
+    hue = h || hsl.h;
+    sat = s || hsl.s;
     ncol = Color.hueToNcol(hue);
     color = new Color();
     color.red = rgb.r;
@@ -339,8 +519,7 @@ export default class Color {
     color.magenta = cmyk.m;
     color.yellow = cmyk.y;
     color.black = cmyk.k;
-    if (ncol != undefined)
-      color.ncol = ncol;
+    if (ncol != undefined) color.ncol = ncol;
     color.opacity = a;
     color.valid = true;
     color.roundDecimals();
@@ -362,16 +541,21 @@ export default class Color {
     this.magenta = Number(this.magenta.toFixed(2));
     this.yellow = Number(this.yellow.toFixed(2));
     this.black = Number(this.black.toFixed(2));
-    this.ncol = this.ncol.substr(0, 1) + Math.round(Number(this.ncol.substr(1)));
+    this.ncol =
+      this.ncol.substr(0, 1) + Math.round(Number(this.ncol.substr(1)));
     this.opacity = Number(this.opacity.toFixed(2));
   }
-  static hslToRgb(hue: number, sat: number, light: number): { r: number, g: number, b: number } {
+  static hslToRgb(
+    hue: number,
+    sat: number,
+    light: number,
+  ): { r: number; g: number; b: number } {
     var t1, t2, r, g, b;
     hue = hue / 60;
     if (light <= 0.5) {
       t2 = light * (sat + 1);
     } else {
-      t2 = light + sat - (light * sat);
+      t2 = light + sat - light * sat;
     }
     t1 = light * 2 - t2;
     r = Color.hueToRgb(t1, t2, hue + 2) * 255;
@@ -379,7 +563,8 @@ export default class Color {
     b = Color.hueToRgb(t1, t2, hue - 2) * 255;
     return { r: r, g: g, b: b };
   }
-  static hueToRgb(t1: number, t2: number, hue: number): number { // ?
+  static hueToRgb(t1: number, t2: number, hue: number): number {
+    // ?
     if (hue < 0) hue += 6;
     if (hue >= 6) hue -= 6;
     if (hue < 1) return (t2 - t1) * hue + t1;
@@ -387,24 +572,35 @@ export default class Color {
     else if (hue < 4) return (t2 - t1) * (4 - hue) + t1;
     else return t1;
   }
-  static hwbToRgb(hue: number, white: number, black: number): { r: number, g: number, b: number } {
-    var i: number, rgb: RGBObj, rgbArr: number[] = [];
-    rgb = Color.hslToRgb(hue, 1, 0.50);
+  static hwbToRgb(
+    hue: number,
+    white: number,
+    black: number,
+  ): { r: number; g: number; b: number } {
+    var i: number,
+      rgb: RGBObj,
+      rgbArr: number[] = [];
+    rgb = Color.hslToRgb(hue, 1, 0.5);
     rgbArr[0] = rgb.r / 255;
     rgbArr[1] = rgb.g / 255;
     rgbArr[2] = rgb.b / 255;
     for (i = 0; i < 3; i++) {
-      rgbArr[i] *= (1 - (white) - (black));
-      rgbArr[i] += (white);
+      rgbArr[i] *= 1 - white - black;
+      rgbArr[i] += white;
       rgbArr[i] = Number(rgbArr[i] * 255);
     }
     return { r: rgbArr[0], g: rgbArr[1], b: rgbArr[2] };
   }
-  static cmykToRgb(c: number, m: number, y: number, k: number): { r: number, g: number, b: number } {
+  static cmykToRgb(
+    c: number,
+    m: number,
+    y: number,
+    k: number,
+  ): { r: number; g: number; b: number } {
     var r: number, g: number, b: number;
-    r = 255 - ((Math.min(1, c * (1 - k) + k)) * 255);
-    g = 255 - ((Math.min(1, m * (1 - k) + k)) * 255);
-    b = 255 - ((Math.min(1, y * (1 - k) + k)) * 255);
+    r = 255 - Math.min(1, c * (1 - k) + k) * 255;
+    g = 255 - Math.min(1, m * (1 - k) + k) * 255;
+    b = 255 - Math.min(1, y * (1 - k) + k) * 255;
     return { r: r, g: g, b: b };
   }
   static ncolToRgb(ncol: string, white: number, black: number): RGBObj | false {
@@ -413,20 +609,33 @@ export default class Color {
     if (isNaN(Number(ncol.substr(0, 1)))) {
       letter = ncol.substr(0, 1).toUpperCase();
       percent = Number(ncol.substr(1));
-      if (isNaN(percent))
-        percent = 0;
+      if (isNaN(percent)) percent = 0;
       percent = Number(percent);
-      if (isNaN(percent)) { return false; }
-      if (letter == "R") { h = 0 + (percent * 0.6); }
-      if (letter == "Y") { h = 60 + (percent * 0.6); }
-      if (letter == "G") { h = 120 + (percent * 0.6); }
-      if (letter == "C") { h = 180 + (percent * 0.6); }
-      if (letter == "B") { h = 240 + (percent * 0.6); }
-      if (letter == "M") { h = 300 + (percent * 0.6); }
+      if (isNaN(percent)) {
+        return false;
+      }
+      if (letter == "R") {
+        h = 0 + percent * 0.6;
+      }
+      if (letter == "Y") {
+        h = 60 + percent * 0.6;
+      }
+      if (letter == "G") {
+        h = 120 + percent * 0.6;
+      }
+      if (letter == "C") {
+        h = 180 + percent * 0.6;
+      }
+      if (letter == "B") {
+        h = 240 + percent * 0.6;
+      }
+      if (letter == "M") {
+        h = 300 + percent * 0.6;
+      }
       if (letter == "W") {
         h = 0;
-        white = 1 - (percent / 100);
-        black = (percent / 100);
+        white = 1 - percent / 100;
+        black = percent / 100;
       }
     }
     return Color.hwbToRgb(parseInt(h.toString()), white, black);
@@ -435,94 +644,150 @@ export default class Color {
     while (hue >= 360) {
       hue = hue - 360;
     }
-    if (hue < 60) { return "R" + (hue / 0.6); }
-    if (hue < 120) { return "Y" + ((hue - 60) / 0.6); }
-    if (hue < 180) { return "G" + ((hue - 120) / 0.6); }
-    if (hue < 240) { return "C" + ((hue - 180) / 0.6); }
-    if (hue < 300) { return "B" + ((hue - 240) / 0.6); }
-    if (hue < 360) { return "M" + ((hue - 300) / 0.6); }
+    if (hue < 60) {
+      return "R" + hue / 0.6;
+    }
+    if (hue < 120) {
+      return "Y" + (hue - 60) / 0.6;
+    }
+    if (hue < 180) {
+      return "G" + (hue - 120) / 0.6;
+    }
+    if (hue < 240) {
+      return "C" + (hue - 180) / 0.6;
+    }
+    if (hue < 300) {
+      return "B" + (hue - 240) / 0.6;
+    }
+    if (hue < 360) {
+      return "M" + (hue - 300) / 0.6;
+    }
   }
   static ncsToRgb(ncsstring: string) {
-    var black, chroma, bc, percent, black1, chroma1, red1, factor1, blue1, red1, red2, green2, blue2, max, factor2, grey, r, g, b;
+    var black,
+      chroma,
+      bc,
+      percent,
+      black1,
+      chroma1,
+      red1,
+      factor1,
+      blue1,
+      red1,
+      red2,
+      green2,
+      blue2,
+      max,
+      factor2,
+      grey,
+      r,
+      g,
+      b;
     var green1 = 0;
-    red2 = 0, blue2 = 0, factor1 = 0, factor2 = 0, red1 = 0, blue1 = 0;
+    ((red2 = 0),
+      (blue2 = 0),
+      (factor1 = 0),
+      (factor2 = 0),
+      (red1 = 0),
+      (blue1 = 0));
     ncsstring = Color.trim(ncsstring).toUpperCase();
     ncsstring = ncsstring.replace("(", "");
     ncsstring = ncsstring.replace(")", "");
     ncsstring = ncsstring.replace("NCS", "NCS ");
     ncsstring = ncsstring.replace(/  /g, " ");
-    if (ncsstring.indexOf("NCS") == -1) { ncsstring = "NCS " + ncsstring; }
-    var ncs: RegExpMatchArray | null = ncsstring.match(/^(?:NCS|NCS\sS)\s(\d{2})(\d{2})-(N|[A-Z])(\d{2})?([A-Z])?$/);
+    if (ncsstring.indexOf("NCS") == -1) {
+      ncsstring = "NCS " + ncsstring;
+    }
+    var ncs: RegExpMatchArray | null = ncsstring.match(
+      /^(?:NCS|NCS\sS)\s(\d{2})(\d{2})-(N|[A-Z])(\d{2})?([A-Z])?$/,
+    );
     if (ncs === null) return false;
     black = parseInt(ncs[1], 10);
     chroma = parseInt(ncs[2], 10);
     bc = ncs[3];
-    if (bc != "N" && bc != "Y" && bc != "R" && bc != "B" && bc != "G") { return false; }
+    if (bc != "N" && bc != "Y" && bc != "R" && bc != "B" && bc != "G") {
+      return false;
+    }
     percent = parseInt(ncs[4], 10) || 0;
-    if (bc !== 'N') {
-      black1 = (1.05 * black - 5.25);
+    if (bc !== "N") {
+      black1 = 1.05 * black - 5.25;
       chroma1 = chroma;
-      if (bc === 'Y' && percent <= 60) {
+      if (bc === "Y" && percent <= 60) {
         red1 = 1;
-      } else if ((bc === 'Y' && percent > 60) || (bc === 'R' && percent <= 80)) {
-        if (bc === 'Y') {
+      } else if (
+        (bc === "Y" && percent > 60) ||
+        (bc === "R" && percent <= 80)
+      ) {
+        if (bc === "Y") {
           factor1 = percent - 60;
         } else {
           factor1 = percent + 40;
         }
-        red1 = ((Math.sqrt(14884 - Math.pow(factor1, 2))) - 22) / 100;
-      } else if ((bc === 'R' && percent > 80) || (bc === 'B')) {
+        red1 = (Math.sqrt(14884 - Math.pow(factor1, 2)) - 22) / 100;
+      } else if ((bc === "R" && percent > 80) || bc === "B") {
         red1 = 0;
-      } else if (bc === 'G') {
-        factor1 = (percent - 170);
-        red1 = ((Math.sqrt(33800 - Math.pow(factor1, 2))) - 70) / 100;
+      } else if (bc === "G") {
+        factor1 = percent - 170;
+        red1 = (Math.sqrt(33800 - Math.pow(factor1, 2)) - 70) / 100;
       }
-      if (bc === 'Y' && percent <= 80) {
+      if (bc === "Y" && percent <= 80) {
         blue1 = 0;
-      } else if ((bc === 'Y' && percent > 80) || (bc === 'R' && percent <= 60)) {
-        if (bc === 'Y') {
-          factor1 = (percent - 80) + 20.5;
+      } else if (
+        (bc === "Y" && percent > 80) ||
+        (bc === "R" && percent <= 60)
+      ) {
+        if (bc === "Y") {
+          factor1 = percent - 80 + 20.5;
         } else {
-          factor1 = (percent + 20) + 20.5;
+          factor1 = percent + 20 + 20.5;
         }
-        blue1 = (104 - (Math.sqrt(11236 - Math.pow(factor1, 2)))) / 100;
-      } else if ((bc === 'R' && percent > 60) || (bc === 'B' && percent <= 80)) {
-        if (bc === 'R') {
-          factor1 = (percent - 60) - 60;
+        blue1 = (104 - Math.sqrt(11236 - Math.pow(factor1, 2))) / 100;
+      } else if (
+        (bc === "R" && percent > 60) ||
+        (bc === "B" && percent <= 80)
+      ) {
+        if (bc === "R") {
+          factor1 = percent - 60 - 60;
         } else {
-          factor1 = (percent + 40) - 60;
+          factor1 = percent + 40 - 60;
         }
-        blue1 = ((Math.sqrt(10000 - Math.pow(factor1, 2))) - 10) / 100;
-      } else if ((bc === 'B' && percent > 80) || (bc === 'G' && percent <= 40)) {
-        if (bc === 'B') {
-          factor1 = (percent - 80) - 131;
+        blue1 = (Math.sqrt(10000 - Math.pow(factor1, 2)) - 10) / 100;
+      } else if (
+        (bc === "B" && percent > 80) ||
+        (bc === "G" && percent <= 40)
+      ) {
+        if (bc === "B") {
+          factor1 = percent - 80 - 131;
         } else {
-          factor1 = (percent + 20) - 131;
+          factor1 = percent + 20 - 131;
         }
-        blue1 = (122 - (Math.sqrt(19881 - Math.pow(factor1, 2)))) / 100;
-      } else if (bc === 'G' && percent > 40) {
+        blue1 = (122 - Math.sqrt(19881 - Math.pow(factor1, 2))) / 100;
+      } else if (bc === "G" && percent > 40) {
         blue1 = 0;
       }
-      if (bc === 'Y') {
-        green1 = (85 - 17 / 20 * percent) / 100;
-      } else if (bc === 'R' && percent <= 60) {
+      if (bc === "Y") {
+        green1 = (85 - (17 / 20) * percent) / 100;
+      } else if (bc === "R" && percent <= 60) {
         green1 = 0;
-      } else if (bc === 'R' && percent > 60) {
-        factor1 = (percent - 60) + 35;
-        green1 = (67.5 - (Math.sqrt(5776 - Math.pow(factor1, 2)))) / 100;
-      } else if (bc === 'B' && percent <= 60) {
-        factor1 = (1 * percent - 68.5);
-        green1 = (6.5 + (Math.sqrt(7044.5 - Math.pow(factor1, 2)))) / 100;
-      } else if ((bc === 'B' && percent > 60) || (bc === 'G' && percent <= 60)) {
+      } else if (bc === "R" && percent > 60) {
+        factor1 = percent - 60 + 35;
+        green1 = (67.5 - Math.sqrt(5776 - Math.pow(factor1, 2))) / 100;
+      } else if (bc === "B" && percent <= 60) {
+        factor1 = 1 * percent - 68.5;
+        green1 = (6.5 + Math.sqrt(7044.5 - Math.pow(factor1, 2))) / 100;
+      } else if (
+        (bc === "B" && percent > 60) ||
+        (bc === "G" && percent <= 60)
+      ) {
         green1 = 0.9;
-      } else if (bc === 'G' && percent > 60) {
-        factor1 = (percent - 60);
-        green1 = (90 - (1 / 8 * factor1)) / 100;
+      } else if (bc === "G" && percent > 60) {
+        factor1 = percent - 60;
+        green1 = (90 - (1 / 8) * factor1) / 100;
       }
       factor1 = (red1 + green1 + blue1) / 3;
-      red2 = ((factor1 - red1) * (100 - chroma1) / 100) + red1;
-      green2 = ((factor1 - green1) * (100 - chroma1) / 100) + green1;
-      blue2 = ((factor1 - blue1) * (100 - chroma1) / 100) + blue1;
+      red2 = ((factor1 - red1) * (100 - chroma1)) / 100 + red1;
+      green2 = ((factor1 - green1) * (100 - chroma1)) / 100 + green1;
+      blue2 = ((factor1 - blue1) * (100 - chroma1)) / 100 + blue1;
       if (red2 > green2 && red2 > blue2) {
         max = red2;
       } else if (green2 > red2 && green2 > blue2) {
@@ -533,19 +798,35 @@ export default class Color {
         max = (red2 + green2 + blue2) / 3;
       }
       factor2 = 1 / max;
-      r = (red2 * factor2 * (100 - black1) / 100) * 255;
-      g = (green2 * factor2 * (100 - black1) / 100) * 255;
-      b = (blue2 * factor2 * (100 - black1) / 100) * 255;
-      if (r > 255) { r = 255; }
-      if (g > 255) { g = 255; }
-      if (b > 255) { b = 255; }
-      if (r < 0) { r = 0; }
-      if (g < 0) { g = 0; }
-      if (b < 0) { b = 0; }
+      r = ((red2 * factor2 * (100 - black1)) / 100) * 255;
+      g = ((green2 * factor2 * (100 - black1)) / 100) * 255;
+      b = ((blue2 * factor2 * (100 - black1)) / 100) * 255;
+      if (r > 255) {
+        r = 255;
+      }
+      if (g > 255) {
+        g = 255;
+      }
+      if (b > 255) {
+        b = 255;
+      }
+      if (r < 0) {
+        r = 0;
+      }
+      if (g < 0) {
+        g = 0;
+      }
+      if (b < 0) {
+        b = 0;
+      }
     } else {
       grey = (1 - black / 100) * 255;
-      if (grey > 255) { grey = 255; }
-      if (grey < 0) { grey = 0; }
+      if (grey > 255) {
+        grey = 255;
+      }
+      if (grey < 0) {
+        grey = 0;
+      }
       r = grey;
       g = grey;
       b = grey;
@@ -553,11 +834,22 @@ export default class Color {
     return {
       r: r,
       g: g,
-      b: b
+      b: b,
     };
   }
-  static rgbToHsl(r: number, g: number, b: number): { h: number, s: number, l: number } {
-    var min: number, max: number, i: number, l: number, s: number, maxcolor: number, h: number = 0, rgb: number[] = [];
+  static rgbToHsl(
+    r: number,
+    g: number,
+    b: number,
+  ): { h: number; s: number; l: number } {
+    var min: number,
+      max: number,
+      i: number,
+      l: number,
+      s: number,
+      maxcolor: number,
+      h: number = 0,
+      rgb: number[] = [];
     rgb[0] = r / 255;
     rgb[1] = g / 255;
     rgb[2] = b / 255;
@@ -565,8 +857,13 @@ export default class Color {
     max = rgb[0];
     maxcolor = 0;
     for (i = 0; i < rgb.length - 1; i++) {
-      if (rgb[i + 1] <= min) { min = rgb[i + 1]; }
-      if (rgb[i + 1] >= max) { max = rgb[i + 1]; maxcolor = i + 1; }
+      if (rgb[i + 1] <= min) {
+        min = rgb[i + 1];
+      }
+      if (rgb[i + 1] >= max) {
+        max = rgb[i + 1];
+        maxcolor = i + 1;
+      }
     }
     if (maxcolor == 0) {
       h = (rgb[1] - rgb[2]) / (max - min);
@@ -575,9 +872,13 @@ export default class Color {
     } else if (maxcolor == 2) {
       h = 4 + (rgb[0] - rgb[1]) / (max - min);
     }
-    if (isNaN(Number(h))) { h = 0; }
+    if (isNaN(Number(h))) {
+      h = 0;
+    }
     h = h * 60;
-    if (h < 0) { h = h + 360; }
+    if (h < 0) {
+      h = h + 360;
+    }
     l = (min + max) / 2;
     if (min == max) {
       s = 0;
@@ -591,13 +892,16 @@ export default class Color {
     s = s;
     return { h: h, s: s, l: l };
   }
-  static rgbToHwb(r: number, g: number, b: number): { h: number, w: number, b: number } {
+  static rgbToHwb(
+    r: number,
+    g: number,
+    b: number,
+  ): { h: number; w: number; b: number } {
     var h: number, w: number, b: number;
     r = r / 255;
     g = g / 255;
     b = b / 255;
-    var
-      max: number = Math.max(r, g, b),
+    var max: number = Math.max(r, g, b),
       min: number = Math.min(r, g, b);
     var chroma: number = max - min;
     if (chroma == 0) {
@@ -605,15 +909,19 @@ export default class Color {
     } else if (r == max) {
       h = (((g - b) / chroma) % 6) * 360;
     } else if (g == max) {
-      h = ((((b - r) / chroma) + 2) % 6) * 360;
+      h = (((b - r) / chroma + 2) % 6) * 360;
     } else {
-      h = ((((r - g) / chroma) + 4) % 6) * 360;
+      h = (((r - g) / chroma + 4) % 6) * 360;
     }
     w = min;
     b = 1 - max;
     return { h: h, w: w, b: b };
   }
-  static rgbToCmyk(r: number, g: number, b: number): { c: number, m: number, y: number, k: number } {
+  static rgbToCmyk(
+    r: number,
+    g: number,
+    b: number,
+  ): { c: number; m: number; y: number; k: number } {
     var c: number, m: number, y: number, k: number;
     r = r / 255;
     g = g / 255;
@@ -633,11 +941,13 @@ export default class Color {
   }
   static toHex(n: number): string {
     var hex = n.toString(16);
-    while (hex.length < 2) { hex = "0" + hex; }
+    while (hex.length < 2) {
+      hex = "0" + hex;
+    }
     return hex;
   }
   static trim(x: string): string {
-    return x.replace(/^\s+|\s+$/g, '');
+    return x.replace(/^\s+|\s+$/g, "");
   }
   public static readonly COLORS: StringMap = {
     AliceBlue: "f0f8ff",
@@ -788,5 +1098,8 @@ export default class Color {
     WhiteSmoke: "f5f5f5",
     Yellow: "ffff00",
     YellowGreen: "9acd32",
+  };
+  equals(other: Color) {
+    return this.toRgbaString() === other.toRgbaString();
   }
 }

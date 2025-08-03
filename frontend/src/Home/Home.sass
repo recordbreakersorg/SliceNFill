@@ -1,3 +1,5 @@
+@use '../w3/theme'
+
 .home-container
   width: 100%
   height: 100%
@@ -21,7 +23,7 @@
       letter-spacing: 2px
       margin: 0
       span:nth-child(3)
-        color: #007acc
+        color: theme.$primary
 
     .subtitle
       font-size: 1.2em
@@ -32,7 +34,7 @@
     margin: 40px 0
 
     .open-button
-      background-color: #007acc
+      background-color: theme.$primary
       color: white
       border: none
       padding: 15px 30px
@@ -44,7 +46,7 @@
       transition: background-color 0.2s ease
 
       &:hover
-        background-color: #005a9e
+        background-color: theme.$primary-d1
 
   .features-section
     display: flex
@@ -59,7 +61,7 @@
 
       h3
         font-size: 1.3em
-        color: #007acc
+        color: theme.$primary
         margin-top: 0
         margin-bottom: 10px
 
