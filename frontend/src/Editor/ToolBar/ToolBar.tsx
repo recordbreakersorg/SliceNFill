@@ -19,6 +19,7 @@ export default function ToolBar({ editor }: { editor: Editor }) {
       primary: [col, ...colors.primary.filter((c) => !c.equals(col))],
       secondary: colors.secondary,
     }));
+    editor.save();
   };
 
   const stackSecondary = (col: Color) => {
@@ -26,6 +27,7 @@ export default function ToolBar({ editor }: { editor: Editor }) {
       primary: colors.primary,
       secondary: [col, ...colors.secondary.filter((c) => !c.equals(col))],
     }));
+    editor.save();
   };
 
   return (
