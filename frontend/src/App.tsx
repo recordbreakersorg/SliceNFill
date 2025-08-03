@@ -10,24 +10,30 @@ export default function App() {
   const [editor, setEditor] = useState<Editor | null>(null);
   const [editors, setEditors] = useState<Editor[]>([]);
   return (
-    <main className="w3-theme-dark">
-      <div className="nav">
-        <Menu
-          editor={editor}
-          setEditor={setEditor}
-          editors={editors}
-          setEditors={setEditors}
-        />
-        <TabBar
-          currentEditor={editor}
-          setEditor={setEditor}
-          editors={editors}
-          setEditors={setEditors}
-        />
-      </div>
-      <div className="editor">
-        {editor ? <EditorComponent editor={editor} /> : <Home />}
-      </div>
-    </main>
+    <div className="app-container">
+      <Menu
+        editor={editor}
+        setEditor={setEditor}
+        editors={editors}
+        setEditors={setEditors}
+      />
+      <main>
+        <div className="tab-bar-container">
+          <TabBar
+            currentEditor={editor}
+            setEditor={setEditor}
+            editors={editors}
+            setEditors={setEditors}
+          />
+        </div>
+        <div className="content-container">
+          {editor ? (
+            <EditorComponent editor={editor} />
+          ) : (
+            <Home setEditor={setEditor} setEditors={setEditors} />
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
