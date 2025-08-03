@@ -28,6 +28,10 @@ function cmd -a name
             help
     end
 end
+function package-linux
+    cd build/darwin
+    nfpm pkg --packager deb --target .
+end
 
 switch "$argv[1]"
     case build-windows
@@ -36,6 +40,8 @@ switch "$argv[1]"
         build-nsis
     case build-linux
         build-linux
+    case package-linux
+        package-linux
     case ""
         echo "Run ./manage.fish help for usage"
 end

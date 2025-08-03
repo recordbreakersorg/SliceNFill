@@ -6,7 +6,7 @@
 # yaml-language-server: $schema=https://nfpm.goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
-name: "Slice'n'Fill"
+name: "slicenfill"
 arch: "amd64"
 platform: "linux"
 version: "1.0.0"
