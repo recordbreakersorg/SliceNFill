@@ -102,12 +102,37 @@ export namespace editor {
 		    return a;
 		}
 	}
+	export class EditorView {
+	    ScaleX: number;
+	    ScaleY: number;
+	    TranslationX: number;
+	    TranslationY: number;
+	    RotationX: number;
+	    RotationY: number;
+	    RotationZ: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new EditorView(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ScaleX = source["ScaleX"];
+	        this.ScaleY = source["ScaleY"];
+	        this.TranslationX = source["TranslationX"];
+	        this.TranslationY = source["TranslationY"];
+	        this.RotationX = source["RotationX"];
+	        this.RotationY = source["RotationY"];
+	        this.RotationZ = source["RotationZ"];
+	    }
+	}
 	export class EditorInfo {
 	    ID: number;
 	    File: string;
 	    Stack: img.ImageInfo[];
 	    StackIndex: number;
 	    Params: EditorParams;
+	    View: EditorView;
 	
 	    static createFrom(source: any = {}) {
 	        return new EditorInfo(source);
@@ -120,6 +145,7 @@ export namespace editor {
 	        this.Stack = this.convertValues(source["Stack"], img.ImageInfo);
 	        this.StackIndex = source["StackIndex"];
 	        this.Params = this.convertValues(source["Params"], EditorParams);
+	        this.View = this.convertValues(source["View"], EditorView);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -140,6 +166,7 @@ export namespace editor {
 		    return a;
 		}
 	}
+	
 	
 
 }

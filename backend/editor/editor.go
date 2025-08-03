@@ -14,12 +14,23 @@ var (
 	editors         []Editor
 )
 
+type EditorView struct {
+	ScaleX       float64
+	ScaleY       float64
+	TranslationX float64
+	TranslationY float64
+	RotationX    float64
+	RotationY    float64
+	RotationZ    float64
+}
+
 type EditorInfo struct {
 	ID         uint64
 	File       string
 	Stack      []img.ImageInfo
 	StackIndex uint
 	Params     EditorParams
+	View       EditorView
 }
 
 type EditorParamsColors struct {
@@ -51,6 +62,7 @@ func (edit *Editor) GetInfo() EditorInfo {
 		Stack:      imageInfo,
 		StackIndex: edit.StackIndex,
 		Params:     edit.Params,
+		View:       EditorView{},
 	}
 }
 
