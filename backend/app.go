@@ -164,3 +164,11 @@ func (app *App) ExportImage(imageInfo img.ImageInfo, format img.ImageFormat) err
 	image.SaveImage(savePath, format, 60)
 	return nil
 }
+
+func (app *App) GetImageThumbnail(id uint64) (string, error) {
+	image, exists := img.GetImage(id)
+	if !exists {
+		return "", fmt.Errorf("image with ID %d not found", id)
+	}
+	return image.ToBase64PNG()
+}

@@ -1,9 +1,34 @@
 import { faRedo, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, useState, useEffect } from "react";
 import Editor from "../../lib/editor";
 import { ImageInfo } from "../../lib/image";
 import "./ChangesBar.sass";
+
+function ChangeThumbnail({
+  change,
+  onClick,
+  isSelected,
+}: {
+  change: ImageInfo;
+  onClick: () => void;
+  isSelected: boolean;
+}) {
+  const [thumbnail, setThumbnail] = useState<string>("");
+
+  useEffect(() => {
+    change.getThumbnail().then(setThumbnail);
+  }, [change]);
+
+  return (
+    <button
+      className={"w3-button stack-button" + (isSelected ? " selected" : "")}
+      onClick={onClick}
+    >
+      <img src={thumbnail} alt={`Change ${change.id}`} />
+    </button>
+  );
+}
 
 export default function ChangesBar({ editor }: { editor: Editor }) {
   const stackIndex = useSyncExternalStore(
@@ -26,16 +51,12 @@ export default function ChangesBar({ editor }: { editor: Editor }) {
         {reversedStack.map((change, idx) => {
           const originalIndex = editor.stack.length - 1 - idx;
           return (
-            <button
-              className={
-                "w3-button stack-button" +
-                (originalIndex === stackIndex ? " selected" : "")
-              }
-              onClick={() => editor.stackIndex.set(originalIndex)}
+            <ChangeThumbnail
               key={originalIndex}
-            >
-              {originalIndex}
-            </button>
+              change={change}
+              isSelected={originalIndex === stackIndex}
+              onClick={() => editor.stackIndex.set(originalIndex)}
+            />
           );
         })}
       </div>

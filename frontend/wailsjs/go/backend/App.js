@@ -26,6 +26,10 @@ export function GetImageFormats() {
   return window['go']['backend']['App']['GetImageFormats']();
 }
 
+export function GetImageThumbnail(arg1) {
+  return window['go']['backend']['App']['GetImageThumbnail'](arg1);
+}
+
 export function ReplaceColor(arg1, arg2, arg3, arg4) {
   return window['go']['backend']['App']['ReplaceColor'](arg1, arg2, arg3, arg4);
 }

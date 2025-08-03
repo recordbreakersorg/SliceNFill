@@ -2,6 +2,8 @@
 package img
 
 import (
+	"bytes"
+	"encoding/base64"
 	"fmt"
 	"image"
 	"image/color"
@@ -15,6 +17,7 @@ import (
 	"strings"
 	"sync/atomic"
 
+	"github.com/nfnt/resize"
 	_ "github.com/srwiley/oksvg"   // svg
 	_ "github.com/srwiley/rasterx" // svg
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -324,4 +327,14 @@ func (img *Image) FloodFill(x, y int, to options.RGBA, tolerance float64) {
 			queue = append(queue, image.Pt(p.X, p.Y-1))
 		}
 	}
+}
+
+func (img *Image) ToBase64PNG() (string, error) {
+	thumb := resize.Resize(64, 64, img.Raw, resize.Lanczos3)
+	var buf bytes.Buffer
+	err := png.Encode(&buf, thumb)
+	if err != nil {
+		return "", err
+	}
+	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
 }

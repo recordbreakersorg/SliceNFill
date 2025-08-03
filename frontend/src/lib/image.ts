@@ -1,4 +1,8 @@
-import { GetImageData, GetImageFormats } from "../../wailsjs/go/backend/App";
+import {
+  GetImageData,
+  GetImageFormats,
+  GetImageThumbnail,
+} from "../../wailsjs/go/backend/App";
 import { img, options } from "../../wailsjs/go/models";
 import Color from "./color";
 
@@ -86,5 +90,9 @@ export class ImageInfo {
       });
     }
     return this._image;
+  }
+  async getThumbnail(): Promise<string> {
+    const b64 = await GetImageThumbnail(this.id);
+    return `data:image/png;base64,${b64}`;
   }
 }

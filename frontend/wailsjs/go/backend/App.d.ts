@@ -16,6 +16,8 @@ export function GetImageData(arg1:number):Promise<Array<number>>;
 
 export function GetImageFormats():Promise<Array<img.ImageFormat>>;
 
+export function GetImageThumbnail(arg1:number):Promise<string>;
+
 export function ReplaceColor(arg1:number,arg2:options.RGBA,arg3:options.RGBA,arg4:number):Promise<img.ImageInfo>;
 
 export function Run():Promise<void>;
