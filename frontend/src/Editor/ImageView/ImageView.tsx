@@ -70,13 +70,16 @@ export default function ImageView({ editor }: { editor: Editor }) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.save();
 
-      const { scale, translation } = editor.view;
+      const { scale, translation, rotation } = editor.view;
       const centeredX = canvas.width / 2 - (imageInfo.width * scale.x) / 2;
       const centeredY = canvas.height / 2 - (imageInfo.height * scale.y) / 2;
 
       ctx.translate(centeredX + translation.x, centeredY + translation.y);
       ctx.scale(scale.x, scale.y);
       ctx.drawImage(offscreenCanvas, 0, 0);
+      ctx.translate(centeredX, centeredY);
+      ctx.rotate(rotation.z);
+      ctx.translate(-centeredX, -centeredY);
       ctx.restore();
     });
   }, [editor, imageInfo]);
@@ -234,17 +237,18 @@ export default function ImageView({ editor }: { editor: Editor }) {
         if (newScale > 0.05 && newScale < 100) {
           editor.view.scale.x = editor.view.scale.y = newScale;
         }
+      } else if (e.shiftKey) {
+        editor.view.rotation.z += (deltaX + deltaY) * 0.005;
       } else {
         // Pan
         editor.view.translation.x += deltaX;
         editor.view.translation.y += deltaY;
       }
+      lastMousePosRef.current = { x: e.clientX, y: e.clientY };
       setTimeout(function () {
+        draw();
         editor.save();
       }, 10);
-
-      lastMousePosRef.current = { x: e.clientX, y: e.clientY };
-      draw();
     };
 
     const handleMouseUp = (e: MouseEvent) => {
