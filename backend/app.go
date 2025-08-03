@@ -6,6 +6,7 @@ import (
 	"context"
 	"embed"
 	"fmt"
+	"os"
 	"slicenfill/backend/editor"
 	"slicenfill/backend/img"
 
@@ -34,22 +35,32 @@ func NewApp(assets embed.FS) *App {
 // so we can call the runtime methods
 func (app *App) startup(ctx context.Context) {
 	app.ctx = ctx
+	fmt.Println("launch args: ", os.Args)
+	if len(os.Args) > 1 {
+		file := os.Args[1]
+		if file != "" {
+			editor.CreateEditor(file)
+		}
+	}
 }
 
 func (app *App) shutdown(ctx context.Context) {
 }
 
 func (app *App) onsecondlaunch(info options.SecondInstanceData) {
-	file := info.Args[1]
-	if file != "" {
-		editor.CreateEditor(file)
-		runtime.WindowReloadApp(app.ctx)
+	fmt.Println("second launch info: ", info)
+	if len(os.Args) > 0 {
+		file := info.Args[0]
+		if file != "" {
+			editor.CreateEditor(file)
+			runtime.WindowReload(app.ctx)
+		}
 	}
 }
 
 func (app *App) Run() error {
 	return wails.Run(&options.App{
-		Title:     "slicenfill",
+		Title:     "Slice'n'Fill",
 		MinWidth:  800,
 		MinHeight: 600,
 		AssetServer: &assetserver.Options{
@@ -68,7 +79,6 @@ func (app *App) Run() error {
 		Mac: &mac.Options{
 			OnFileOpen: func(filePath string) {
 				editor.CreateEditor(filePath)
-				runtime.WindowReloadApp(app.ctx)
 			},
 			OnUrlOpen: func(_ string) {
 			},

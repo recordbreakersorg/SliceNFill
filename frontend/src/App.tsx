@@ -7,8 +7,8 @@ import Menu from "./Menu/Menu";
 import "./App.sass";
 
 export default function App() {
-  const [editor, setEditor] = useState<Editor | null>(null);
   const [editors, setEditors] = useState<Editor[]>([]);
+  const [editor, setEditor] = useState<Editor | null>(editors.at(-1) ?? null);
   return (
     <div className="app-container">
       <Menu
