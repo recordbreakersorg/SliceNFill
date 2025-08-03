@@ -156,6 +156,7 @@ export default class Editor {
     return this.mode.getSnapshot();
   }
   async save() {
+    console.log("saving editor");
     return await SaveEditor(this.toGO());
   }
   toGO() {

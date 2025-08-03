@@ -70,6 +70,15 @@ func CreateEditor(path string) (Editor, error) {
 			},
 			Tolerance: 1,
 		},
+		View: EditorView{
+			TranslationX: 0,
+			TranslationY: 0,
+			RotationX:    0,
+			RotationY:    0,
+			RotationZ:    0,
+			ScaleX:       1,
+			ScaleY:       1,
+		},
 	}
 	fmt.Println("EDitor created", edit)
 	editors = append(editors, edit)
