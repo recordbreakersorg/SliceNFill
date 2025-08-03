@@ -40,6 +40,11 @@ func (app *App) shutdown(ctx context.Context) {
 }
 
 func (app *App) onsecondlaunch(info options.SecondInstanceData) {
+	file := info.Args[1]
+	if file != "" {
+		editor.CreateEditor(file)
+		runtime.WindowReloadApp(app.ctx)
+	}
 }
 
 func (app *App) Run() error {
