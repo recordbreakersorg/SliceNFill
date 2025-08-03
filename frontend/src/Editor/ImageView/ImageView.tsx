@@ -35,7 +35,7 @@ export default function ImageView({ editor }: { editor: Editor }) {
     (callback) => editor.stackIndex.subscribe(callback),
     () => editor.stackIndex.getSnapshot(),
   );
-  const imageInfo = editor.stack[stackIndex];
+  const imageInfo: ImageInfo = editor.stack[stackIndex];
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const offscreenCanvasRef = useRef<OffscreenCanvas | null>(null);
@@ -239,6 +239,9 @@ export default function ImageView({ editor }: { editor: Editor }) {
         editor.view.translation.x += deltaX;
         editor.view.translation.y += deltaY;
       }
+      setTimeout(function () {
+        editor.save();
+      }, 10);
 
       lastMousePosRef.current = { x: e.clientX, y: e.clientY };
       draw();

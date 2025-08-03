@@ -20,6 +20,21 @@ export type EditorParams = {
   colors: Ruse<EditorParamsColors>;
   tolerance: Ruse<number>;
 };
+export type EditorView = {
+  scale: {
+    x: number;
+    y: number;
+  };
+  translation: {
+    x: number;
+    y: number;
+  };
+  rotation: {
+    x: number;
+    y: number;
+    z: number;
+  };
+};
 
 export enum EditorMode {
   Normal,
@@ -48,24 +63,10 @@ export default class Editor {
   stackIndex: Ruse<number>;
   mode: Ruse<EditorMode>;
   status: StatusManager;
-  view: {
-    scale: {
-      x: number;
-      y: number;
-    };
-    translation: {
-      x: number;
-      y: number;
-    };
-    rotation: {
-      x: number;
-      y: number;
-      z: number;
-    };
-  };
+  view: EditorView;
 
   static async getEditors(): Promise<Editor[]> {
-    return GetEditors().then((editors: editor.EditorInfo[]) =>
+    return GetEditors().then((editors: editor.Editor[]) =>
       editors.map((info) => {
         return Editor.fromInfo(info);
       }),
@@ -76,7 +77,7 @@ export default class Editor {
       return Editor.fromInfo(rawEditor);
     });
   }
-  static fromInfo(go: editor.EditorInfo) {
+  static fromInfo(go: editor.Editor) {
     return new Editor({
       file: go.File,
       id: go.ID,
@@ -98,6 +99,21 @@ export default class Editor {
       },
       stack: go.Stack.map(ImageInfo.fromGO),
       stackIndex: go.StackIndex,
+      view: {
+        translation: {
+          x: go.View.TranslationX,
+          y: go.View.TranslationY,
+        },
+        rotation: {
+          x: go.View.RotationX,
+          y: go.View.RotationY,
+          z: go.View.RotationZ,
+        },
+        scale: {
+          x: go.View.ScaleX,
+          y: go.View.ScaleY,
+        },
+      },
     });
   }
   constructor({
@@ -106,12 +122,14 @@ export default class Editor {
     stack,
     stackIndex,
     params,
+    view,
   }: {
     file: string;
     id: number;
     params: EditorParams;
     stack: ImageInfo[];
     stackIndex: number;
+    view: EditorView;
   }) {
     this.status = new StatusManager();
     this.file = file;
@@ -120,21 +138,7 @@ export default class Editor {
     this.stack = stack;
     this.stackIndex = new Ruse(stackIndex);
     this.mode = new Ruse(EditorMode.Normal);
-    this.view = {
-      rotation: {
-        x: 0,
-        y: 0,
-        z: 0,
-      },
-      scale: {
-        x: 1,
-        y: 1,
-      },
-      translation: {
-        x: 0,
-        y: 0,
-      },
-    };
+    this.view = view;
   }
   addStack(image: ImageInfo) {
     let idx = this.stackIndex.getSnapshot();
@@ -152,6 +156,7 @@ export default class Editor {
     return this.mode.getSnapshot();
   }
   async save() {
+    console.log("saving editor");
     return await SaveEditor(this.toGO());
   }
   toGO() {
@@ -170,6 +175,15 @@ export default class Editor {
             .secondary.map((c) => Image.colToRGBA(c)),
         }),
         Tolerance: this.params.tolerance.getSnapshot(),
+      }),
+      View: new editor.EditorView({
+        ScaleX: this.view.scale.x,
+        ScaleY: this.view.scale.y,
+        TranslationX: this.view.translation.x,
+        TranslationY: this.view.translation.y,
+        RotationX: this.view.rotation.x,
+        RotationY: this.view.rotation.y,
+        RotationZ: this.view.rotation.z,
       }),
     });
   }

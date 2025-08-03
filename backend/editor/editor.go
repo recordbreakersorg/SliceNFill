@@ -14,12 +14,14 @@ var (
 	editors         []Editor
 )
 
-type EditorInfo struct {
-	ID         uint64
-	File       string
-	Stack      []img.ImageInfo
-	StackIndex uint
-	Params     EditorParams
+type EditorView struct {
+	ScaleX       float64
+	ScaleY       float64
+	TranslationX float64
+	TranslationY float64
+	RotationX    float64
+	RotationY    float64
+	RotationZ    float64
 }
 
 type EditorParamsColors struct {
@@ -35,35 +37,14 @@ type EditorParams struct {
 type Editor struct {
 	ID         uint64
 	File       string
-	Stack      []img.Image
+	Stack      []img.ImageInfo
 	StackIndex uint
 	Params     EditorParams
-}
-
-func (edit *Editor) GetInfo() EditorInfo {
-	var imageInfo []img.ImageInfo
-	for _, image := range edit.Stack {
-		imageInfo = append(imageInfo, image.GetInfo())
-	}
-	return EditorInfo{
-		ID:         edit.ID,
-		File:       edit.File,
-		Stack:      imageInfo,
-		StackIndex: edit.StackIndex,
-		Params:     edit.Params,
-	}
+	View       EditorView
 }
 
 func GetEditors() []Editor {
 	return editors
-}
-
-func GetEditorsInfos() []EditorInfo {
-	var infos []EditorInfo
-	for _, edit := range editors {
-		infos = append(infos, edit.GetInfo())
-	}
-	return infos
 }
 
 func CreateEditor(path string) (Editor, error) {
@@ -74,7 +55,7 @@ func CreateEditor(path string) (Editor, error) {
 	edit := Editor{
 		ID:         atomic.AddUint64(&editorIDCounter, 1),
 		File:       path,
-		Stack:      []img.Image{image},
+		Stack:      []img.ImageInfo{image.GetInfo()},
 		StackIndex: 0,
 		Params: EditorParams{
 			Colors: EditorParamsColors{
@@ -88,6 +69,15 @@ func CreateEditor(path string) (Editor, error) {
 				},
 			},
 			Tolerance: 1,
+		},
+		View: EditorView{
+			TranslationX: 0,
+			TranslationY: 0,
+			RotationX:    0,
+			RotationY:    0,
+			RotationZ:    0,
+			ScaleX:       1,
+			ScaleY:       1,
 		},
 	}
 	fmt.Println("EDitor created", edit)

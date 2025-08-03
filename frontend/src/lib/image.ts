@@ -77,7 +77,10 @@ export class ImageInfo {
     const array = new Uint8Array(data.length);
     for (let i = 0; i < data.length; i++) array[i] = data.charCodeAt(i);
     console.log(
-      `[ts:img] Decoded from base64. First 16 bytes: ${data.slice(0, 16)}`,
+      "[ts:img] Decoded from base64. length",
+      data.length,
+      " First 16 bytes: ",
+      data.slice(0, 16),
     );
     return array;
   }

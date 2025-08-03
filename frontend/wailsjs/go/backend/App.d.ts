@@ -4,7 +4,7 @@ import {editor} from '../models';
 import {img} from '../models';
 import {options} from '../models';
 
-export function AskOpenImages():Promise<Array<editor.EditorInfo>>;
+export function AskOpenImages():Promise<Array<editor.Editor>>;
 
 export function DeleteEditor(arg1:number):Promise<boolean>;
 
@@ -12,7 +12,7 @@ export function ExportImage(arg1:img.ImageInfo,arg2:img.ImageFormat):Promise<voi
 
 export function FloodFill(arg1:number,arg2:number,arg3:number,arg4:options.RGBA,arg5:number):Promise<img.ImageInfo>;
 
-export function GetEditors():Promise<Array<editor.EditorInfo>>;
+export function GetEditors():Promise<Array<editor.Editor>>;
 
 export function GetImageData(arg1:number):Promise<Array<number>>;
 
