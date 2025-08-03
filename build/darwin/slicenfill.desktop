@@ -1,0 +1,8 @@
+[Desktop Entry]
+Categories=Office
+Exec=/usr/bin/slicenfill %u
+Icon=slicenfill.png
+Name=Slice'n'Fill
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/slicenfill;

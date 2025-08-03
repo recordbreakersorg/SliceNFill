@@ -1,0 +1,32 @@
+# This is an example nfpm configuration file.
+# Make sure to check the documentation at https://nfpm.goreleaser.com
+#
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://nfpm.goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+name: "Slice'n'Fill"
+arch: "amd64"
+platform: "linux"
+version: "1.0.0"
+section: "default"
+priority: "extra"
+maintainer: "Engon Ken Morel <engon@rbs.cm>"
+description: "Quickly tweak and  convert images"
+vendor: "The Record Breakers"
+homepage: "https://slicenfill.rbs.cm"
+license: "MIT"
+contents:
+  - src: ../bin/slicenfill
+    dst: /usr/bin/wails-open-file
+  - src: ./slicenfill.desktop
+    dst: /usr/share/applications/slicenfill.desktop
+  - src: ../../logo.svg
+    dst: /usr/share/icons/hicolor/scalable/apps/slicenfill.svg
+  # copy icons to Yaru theme as well. For some reason Ubuntu didn't pick up fileicons from hicolor theme
+  - src: ../../logo.svg
+    dst: /usr/share/icons/Yaru/scalable/apps/slicenfill.svg
+scripts:
+  postinstall: ./postInstall.sh
+  postremove: ./postRemove.sh
