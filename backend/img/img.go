@@ -255,7 +255,7 @@ func colorDistance(c1, c2 color.Color) float64 {
 	g2_8 := float64(g2 >> 8)
 	b2_8 := float64(b2 >> 8)
 
-	return math.Sqrt(math.Pow(r1_8-r2_8, 2) + math.Pow(g1_8-g2_8, 2) + math.Pow(b1_8-b2_8, 2))
+	return math.Sqrt((r1_8-r2_8)*(r1_8-r2_8) + (g1_8-g2_8)*(g1_8-g2_8) + (b1_8-b2_8)*(b1_8-b2_8))
 }
 
 // ReplaceColor finds all pixels of a given color and replaces them with another.
@@ -325,4 +325,3 @@ func (img *Image) FloodFill(x, y int, to options.RGBA, tolerance float64) {
 		}
 	}
 }
-
