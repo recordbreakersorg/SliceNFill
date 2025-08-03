@@ -8,16 +8,16 @@
     !define INFO_PROJECTNAME "slicenfill"
 !endif
 !ifndef INFO_COMPANYNAME
-    !define INFO_COMPANYNAME "slicenfill"
+    !define INFO_COMPANYNAME "The Record Breakers"
 !endif
 !ifndef INFO_PRODUCTNAME
-    !define INFO_PRODUCTNAME "slicenfill"
+    !define INFO_PRODUCTNAME "Slice'n'Fill"
 !endif
 !ifndef INFO_PRODUCTVERSION
-    !define INFO_PRODUCTVERSION "1.0.0"
+    !define INFO_PRODUCTVERSION "0.1.0"
 !endif
 !ifndef INFO_COPYRIGHT
-    !define INFO_COPYRIGHT "Copyright........."
+    !define INFO_COPYRIGHT "2025 The Record Breakers"
 !endif
 !ifndef PRODUCT_EXECUTABLE
     !define PRODUCT_EXECUTABLE "${INFO_PROJECTNAME}.exe"
@@ -204,10 +204,90 @@ RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}"
 !macro wails.associateFiles
     ; Create file associations
     
+      !insertmacro APP_ASSOCIATE "png" "PNG Image" "Portable Network Graphics" "$INSTDIR\slicenfill.ico" "Open with ${INFO_PRODUCTNAME}" "$INSTDIR\${PRODUCT_EXECUTABLE} $\"%1$\""
+
+      File "..\slicenfill.ico"
+    
+      !insertmacro APP_ASSOCIATE "jpg" "JPEG Image" "Joint Photographic Experts Group Image" "$INSTDIR\slicenfill.ico" "Open with ${INFO_PRODUCTNAME}" "$INSTDIR\${PRODUCT_EXECUTABLE} $\"%1$\""
+
+      File "..\slicenfill.ico"
+    
+      !insertmacro APP_ASSOCIATE "jpeg" "JPEG Image" "Joint Photographic Experts Group Image" "$INSTDIR\slicenfill.ico" "Open with ${INFO_PRODUCTNAME}" "$INSTDIR\${PRODUCT_EXECUTABLE} $\"%1$\""
+
+      File "..\slicenfill.ico"
+    
+      !insertmacro APP_ASSOCIATE "bmp" "Bitmap Image" "Bitmap Image File" "$INSTDIR\slicenfill.ico" "Open with ${INFO_PRODUCTNAME}" "$INSTDIR\${PRODUCT_EXECUTABLE} $\"%1$\""
+
+      File "..\slicenfill.ico"
+    
+      !insertmacro APP_ASSOCIATE "gif" "GIF Image" "Graphics Interchange Format" "$INSTDIR\slicenfill.ico" "Open with ${INFO_PRODUCTNAME}" "$INSTDIR\${PRODUCT_EXECUTABLE} $\"%1$\""
+
+      File "..\slicenfill.ico"
+    
+      !insertmacro APP_ASSOCIATE "tiff" "TIFF Image" "Tagged Image File Format" "$INSTDIR\slicenfill.ico" "Open with ${INFO_PRODUCTNAME}" "$INSTDIR\${PRODUCT_EXECUTABLE} $\"%1$\""
+
+      File "..\slicenfill.ico"
+    
+      !insertmacro APP_ASSOCIATE "webp" "WebP Image" "WebP Image (read-only)" "$INSTDIR\slicenfill.ico" "Open with ${INFO_PRODUCTNAME}" "$INSTDIR\${PRODUCT_EXECUTABLE} $\"%1$\""
+
+      File "..\slicenfill.ico"
+    
+      !insertmacro APP_ASSOCIATE "avif" "AVIF Image" "AV1 Image File Format (read-only)" "$INSTDIR\slicenfill.ico" "Open with ${INFO_PRODUCTNAME}" "$INSTDIR\${PRODUCT_EXECUTABLE} $\"%1$\""
+
+      File "..\slicenfill.ico"
+    
+      !insertmacro APP_ASSOCIATE "ico" "Icon File" "Windows Icon File (read-only)" "$INSTDIR\slicenfill.ico" "Open with ${INFO_PRODUCTNAME}" "$INSTDIR\${PRODUCT_EXECUTABLE} $\"%1$\""
+
+      File "..\slicenfill.ico"
+    
+      !insertmacro APP_ASSOCIATE "svg" "SVG Image" "Scalable Vector Graphics (read-only)" "$INSTDIR\slicenfill.ico" "Open with ${INFO_PRODUCTNAME}" "$INSTDIR\${PRODUCT_EXECUTABLE} $\"%1$\""
+
+      File "..\slicenfill.ico"
+    
 !macroend
 
 !macro wails.unassociateFiles
     ; Delete app associations
+    
+      !insertmacro APP_UNASSOCIATE "png" "PNG Image"
+
+      Delete "$INSTDIR\slicenfill.ico"
+    
+      !insertmacro APP_UNASSOCIATE "jpg" "JPEG Image"
+
+      Delete "$INSTDIR\slicenfill.ico"
+    
+      !insertmacro APP_UNASSOCIATE "jpeg" "JPEG Image"
+
+      Delete "$INSTDIR\slicenfill.ico"
+    
+      !insertmacro APP_UNASSOCIATE "bmp" "Bitmap Image"
+
+      Delete "$INSTDIR\slicenfill.ico"
+    
+      !insertmacro APP_UNASSOCIATE "gif" "GIF Image"
+
+      Delete "$INSTDIR\slicenfill.ico"
+    
+      !insertmacro APP_UNASSOCIATE "tiff" "TIFF Image"
+
+      Delete "$INSTDIR\slicenfill.ico"
+    
+      !insertmacro APP_UNASSOCIATE "webp" "WebP Image"
+
+      Delete "$INSTDIR\slicenfill.ico"
+    
+      !insertmacro APP_UNASSOCIATE "avif" "AVIF Image"
+
+      Delete "$INSTDIR\slicenfill.ico"
+    
+      !insertmacro APP_UNASSOCIATE "ico" "Icon File"
+
+      Delete "$INSTDIR\slicenfill.ico"
+    
+      !insertmacro APP_UNASSOCIATE "svg" "SVG Image"
+
+      Delete "$INSTDIR\slicenfill.ico"
     
 !macroend
 
@@ -228,9 +308,14 @@ RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}"
 !macro wails.associateCustomProtocols
     ; Create custom protocols associations
     
+      !insertmacro CUSTOM_PROTOCOL_ASSOCIATE "slicenfill" "Open Slice'n'Fill" "$INSTDIR\${PRODUCT_EXECUTABLE},0" "$INSTDIR\${PRODUCT_EXECUTABLE} $\"%1$\""
+
+    
 !macroend
 
 !macro wails.unassociateCustomProtocols
     ; Delete app custom protocol associations
+    
+      !insertmacro CUSTOM_PROTOCOL_UNASSOCIATE "slicenfill"
     
 !macroend
