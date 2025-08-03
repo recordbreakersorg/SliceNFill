@@ -136,6 +136,13 @@ export default class Editor {
       },
     };
   }
+  addStack(image: ImageInfo) {
+    let idx = this.stackIndex.getSnapshot();
+    if (idx < 0) idx = 0;
+    if (idx > this.stack.length - 1) idx = this.stack.length - 1;
+    this.stack.splice(idx + 1, 0, image);
+    this.stackIndex.set(idx + 1);
+  }
   toggleMode(
     mode: EditorMode,
     normal: EditorMode = EditorMode.Normal,

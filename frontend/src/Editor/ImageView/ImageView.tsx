@@ -191,16 +191,14 @@ export default function ImageView({ editor }: { editor: Editor }) {
           break;
         case EditorMode.Replace:
           editor.replaceColor(color).then((image: ImageInfo) => {
-            editor.stack.push(image);
-            editor.stackIndex.set(editor.stack.length - 1);
+            editor.addStack(image);
             editor.save();
             draw();
             setTimeout(draw, 100);
           });
         case EditorMode.Fill:
           editor.floodFill(offscreenX, offscreenY).then((image: ImageInfo) => {
-            editor.stack.push(image);
-            editor.stackIndex.set(editor.stack.length - 1);
+            editor.addStack(image);
             editor.save();
             draw();
             setTimeout(draw, 100);
