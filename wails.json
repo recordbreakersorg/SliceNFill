@@ -9,5 +9,93 @@
   "author": {
     "name": "Engon Ken Morel",
     "email": "engonken8@gmail.com"
+  },
+  "info": {
+    "companyName": "The Record Breakers",
+    "productName": "Slice'n'Fill",
+    "productVersion": "v0.1.0",
+    "copyright": "2025 The Record Breakers",
+    "comments": "Quickly tweak and convert images",
+    "fileAssociations": [
+      {
+        "ext": "png",
+        "name": "Png image",
+        "description": "Portable network graphics file",
+        "iconName": "slicenfill",
+        "role": "Editor"
+      },
+      {
+        "ext": "jpg",
+        "name": "jpeg image",
+        "description": "bitmap image file",
+        "iconName": "slicenfill",
+        "role": "Editor"
+      },
+      {
+        "ext": "jpeg",
+        "name": "jpeg image",
+        "description": "bitmap image file",
+        "iconName": "slicenfill",
+        "role": "Editor"
+      },
+      {
+        "ext": "bmp",
+        "name": "bitmap image",
+        "description": "bitmap image file",
+        "iconName": "slicenfill",
+        "role": "Editor"
+      },
+      {
+        "ext": "gif",
+        "name": "bitmap image",
+        "description": "graphical interchange format image",
+        "iconName": "slicenfill",
+        "role": "Editor"
+      },
+      {
+        "ext": "tiff",
+        "name": "tiff image",
+        "description": "TIFF image",
+        "iconName": "slicenfill",
+        "role": "Editor"
+      },
+
+      {
+        "ext": "webp",
+        "name": "webp bitmap image",
+        "description": "webp bitmap image(read only)",
+        "iconName": "slicenfill",
+        "role": "Editor"
+      },
+
+      {
+        "ext": "avif",
+        "name": "avif bitmap image",
+        "description": "avif bitmap image(read only)",
+        "iconName": "slicenfill",
+        "role": "Editor"
+      },
+      {
+        "ext": "ico",
+        "name": "icon bitmap image",
+        "description": "icon bitmap image(read only)",
+        "iconName": "slicenfill",
+        "role": "Editor"
+      },
+      {
+        "ext": "svg",
+        "name": "vector image",
+        "description": "vector image(read only)",
+        "iconName": "slicenfill",
+        "role": "Editor"
+      }
+    ],
+    "protocols": [
+      {
+        "scheme": "cm.rbs.sicenfill",
+        "description": "Open slicenfill",
+        "role": "Editor"
+      }
+    ]
   }
 }
