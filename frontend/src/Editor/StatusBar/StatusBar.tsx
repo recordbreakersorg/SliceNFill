@@ -16,26 +16,32 @@ export default function StatusBar({ editor }: { editor: Editor }) {
   const rightMessages = messages.filter((m) => m.align === "right");
 
   return (
-    <div className="StatusBar w3-bar">
-      <p className={"mode w3-bar-item w3-left " + modeName(editorMode)}>
+    <div className="StatusBar">
+      <span className={"mode " + modeName(editorMode).toLowerCase()}>
         {modeName(editorMode).toUpperCase()}
-      </p>
-      {leftMessages.map((message) => (
-        <div
-          key={message.id}
-          className={`w3-left w3-bar-item w3-padding ${message.type || ""}`}
-        >
-          {message.content}
+      </span>
+      <div className="message-container">
+        <div className="left-messages">
+          {leftMessages.map((message) => (
+            <span
+              key={message.id}
+              className={`message ${message.type || ""}`}
+            >
+              {message.content}
+            </span>
+          ))}
         </div>
-      ))}
-      {rightMessages.map((message) => (
-        <div
-          key={message.id}
-          className={`w3-right w3-bar-item w3-padding ${message.type || ""}`}
-        >
-          {message.content}
+        <div className="right-messages">
+          {rightMessages.map((message) => (
+            <span
+              key={message.id}
+              className={`message ${message.type || ""}`}
+            >
+              {message.content}
+            </span>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 }
