@@ -19,82 +19,80 @@
     "fileAssociations": [
       {
         "ext": "png",
-        "name": "Png image",
-        "description": "Portable network graphics file",
+        "name": "PNG Image",
+        "description": "Portable Network Graphics",
         "iconName": "slicenfill",
         "role": "Editor"
       },
       {
         "ext": "jpg",
-        "name": "jpeg image",
-        "description": "bitmap image file",
+        "name": "JPEG Image",
+        "description": "Joint Photographic Experts Group Image",
         "iconName": "slicenfill",
         "role": "Editor"
       },
       {
         "ext": "jpeg",
-        "name": "jpeg image",
-        "description": "bitmap image file",
+        "name": "JPEG Image",
+        "description": "Joint Photographic Experts Group Image",
         "iconName": "slicenfill",
         "role": "Editor"
       },
       {
         "ext": "bmp",
-        "name": "bitmap image",
-        "description": "bitmap image file",
+        "name": "Bitmap Image",
+        "description": "Bitmap Image File",
         "iconName": "slicenfill",
         "role": "Editor"
       },
       {
         "ext": "gif",
-        "name": "bitmap image",
-        "description": "graphical interchange format image",
+        "name": "GIF Image",
+        "description": "Graphics Interchange Format",
         "iconName": "slicenfill",
         "role": "Editor"
       },
       {
         "ext": "tiff",
-        "name": "tiff image",
-        "description": "TIFF image",
+        "name": "TIFF Image",
+        "description": "Tagged Image File Format",
         "iconName": "slicenfill",
         "role": "Editor"
       },
-
       {
         "ext": "webp",
-        "name": "webp bitmap image",
-        "description": "webp bitmap image(read only)",
+        "name": "WebP Image",
+        "description": "WebP Image (read-only)",
         "iconName": "slicenfill",
         "role": "Editor"
       },
-
       {
         "ext": "avif",
-        "name": "avif bitmap image",
-        "description": "avif bitmap image(read only)",
+        "name": "AVIF Image",
+        "description": "AV1 Image File Format (read-only)",
         "iconName": "slicenfill",
         "role": "Editor"
       },
       {
         "ext": "ico",
-        "name": "icon bitmap image",
-        "description": "icon bitmap image(read only)",
+        "name": "Icon File",
+        "description": "Windows Icon File (read-only)",
         "iconName": "slicenfill",
         "role": "Editor"
       },
       {
         "ext": "svg",
-        "name": "vector image",
-        "description": "vector image(read only)",
+        "name": "SVG Image",
+        "description": "Scalable Vector Graphics (read-only)",
         "iconName": "slicenfill",
         "role": "Editor"
       }
     ],
     "protocols": [
       {
-        "scheme": "cm.rbs.sicenfill",
-        "description": "Open slicenfill",
-        "role": "Editor"
+        "scheme": "slicenfill",
+        "description": "Open Slice'n'Fill",
+        "role": "Viewer"
       }
     ]
   }

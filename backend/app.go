@@ -12,6 +12,8 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/mac"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -42,9 +44,9 @@ func (app *App) onsecondlaunch(info options.SecondInstanceData) {
 
 func (app *App) Run() error {
 	return wails.Run(&options.App{
-		Title:  "slicenfill",
-		Width:  800,
-		Height: 600,
+		Title:     "slicenfill",
+		MinWidth:  800,
+		MinHeight: 600,
 		AssetServer: &assetserver.Options{
 			Assets: app.assets,
 		},
@@ -55,10 +57,24 @@ func (app *App) Run() error {
 			UniqueId:               "cm.rbs.slicenfill",
 			OnSecondInstanceLaunch: app.onsecondlaunch,
 		},
-		MinWidth:  500,
-		MinHeight: 400,
 		Bind: []any{
 			app,
+		},
+		Mac: &mac.Options{
+			OnFileOpen: func(filePath string) {
+				editor.CreateEditor(filePath)
+				runtime.WindowReloadApp(app.ctx)
+			},
+			OnUrlOpen: func(_ string) {
+			},
+			About: &mac.AboutInfo{
+				Title:   "Slice'n'Fill",
+				Message: "Quickly twean on images",
+			},
+		},
+		Windows: &windows.Options{
+			Theme:           windows.Dark,
+			WindowClassName: "cm.rbs.slicenfill",
 		},
 	})
 }

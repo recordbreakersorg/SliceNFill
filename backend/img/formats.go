@@ -6,6 +6,8 @@ import (
 	"io"
 	"path/filepath"
 	"strings"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type ImageFormat struct {
@@ -95,6 +97,30 @@ var FORMATS = []ImageFormat{
 		CanRead:   true,
 		CanWrite:  false, // SVG is vector, would need special handling
 	},
+}
+
+func GetReadImageFileFilters() []runtime.FileFilter {
+	var filters []runtime.FileFilter
+	var allReadablePatterns []string
+
+	for _, format := range FORMATS {
+		if format.CanRead {
+			displayName := fmt.Sprintf("%s (*%s)", format.Name, format.Extension)
+			filters = append(filters, runtime.FileFilter{
+				DisplayName: displayName,
+				Pattern:     "*" + format.Extension,
+			})
+			allReadablePatterns = append(allReadablePatterns, "*"+format.Extension)
+		}
+	}
+
+	// Add an "All supported" filter at the beginning
+	allFilter := runtime.FileFilter{
+		DisplayName: "All Supported Images",
+		Pattern:     strings.Join(allReadablePatterns, ";"),
+	}
+
+	return append([]runtime.FileFilter{allFilter}, filters...)
 }
 
 // GetFormatByExtension finds format by file extension
